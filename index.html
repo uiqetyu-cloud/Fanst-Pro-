@@ -1,0 +1,2140 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Pro - مصطفى</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-color: #0E0E0E;
+            --primary-dark: #070707; 
+            --card-color: #171717;
+            --card-glass: rgba(23, 23, 23, 0.75);
+            --neon-green: #D9FF57;
+            --neon-orange: #FF9500;
+            --neon-blue: #00E5FF;
+            --neon-red: #FF3B30;
+            --text-white: #FFFFFF;
+            --text-muted: #A1A1A1;
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --blur-val: 20px;
+            --font-ar: 'Cairo', sans-serif;
+            --font-en: 'Poppins', sans-serif;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none; 
+            -moz-user-select: none;    
+            -ms-user-select: none;     
+            user-select: none;         
+            -webkit-touch-callout: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-with-user-select: text;
+            user-select: text;
+        }
+
+        body {
+            background-color: var(--primary-dark);
+            color: var(--text-white);
+            font-family: var(--font-ar);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            border: 4px solid #1a1a1a;
+        }
+
+        @media (max-width: 450px) {
+            .app-container {
+                border-radius: 0;
+                max-height: 100vh;
+                border: none;
+            }
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(217, 255, 87, 0.06) 0%, rgba(0,0,0,0) 70%);
+            top: -50px;
+            left: -50px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .skeleton-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 200;
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: opacity 0.4s ease;
+        }
+        .skeleton-block {
+            background: linear-gradient(90deg, #171717 25%, #262626 50%, #171717 75%);
+            background-size: 200% 100%;
+            animation: loading-shimmer 1.5s infinite;
+            border-radius: 16px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton-block { animation: none; }
+        }
+        @keyframes loading-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            padding-bottom: 110px;
+            z-index: 1;
+            scroll-behavior: smooth;
+            background: linear-gradient(180deg, var(--bg-color) 0%, var(--primary-dark) 100%);
+        }
+        .main-content::-webkit-scrollbar { width: 0; }
+
+        .page {
+            display: none;
+            animation: fade-slide-up 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        .page.active { display: block; }
+
+        @keyframes fade-slide-up {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-glass);
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(var(--blur-val));
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .search-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            padding: 12px 44px 12px 16px;
+            border-radius: 16px;
+            color: var(--text-white);
+            font-family: var(--font-ar);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .search-field:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            background: rgba(255, 255, 255, 0.07);
+        }
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .filter-tabs::-webkit-scrollbar { height: 0; }
+        .filter-btn {
+            flex-shrink: 0;
+            min-width: 75px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: var(--font-ar);
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .filter-btn.active {
+            background: var(--neon-green);
+            color: var(--bg-color);
+            border-color: var(--neon-green);
+        }
+        
+        .muscle-filter-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .muscle-filter-tabs::-webkit-scrollbar { height: 0; }
+        .muscle-btn {
+            flex-shrink: 0;
+            background: transparent;
+            border: 1px dashed var(--border-glass);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-ar);
+            font-size: 11px;
+            transition: var(--transition);
+        }
+        .muscle-btn.active {
+            border-style: solid;
+            border-color: var(--neon-orange);
+            color: var(--neon-orange);
+            background: rgba(255, 149, 0, 0.05);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 24px;
+        }
+        .user-info h2 { font-size: 22px; font-weight: 700; }
+        .user-info p { color: var(--text-muted); font-size: 13px; }
+        
+        .profile-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--neon-green);
+            background: #222;
+        }
+
+        .banner-card {
+            background: linear-gradient(135deg, rgba(217,255,87,0.1) 0%, rgba(23,23,23,0.8) 100%);
+            border: 1px solid rgba(217, 255, 87, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .banner-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .stat-box { padding: 16px; }
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .stat-value { font-size: 19px; font-weight: 700; }
+        .stat-sub { font-size: 12px; color: var(--text-muted); }
+
+        .streak-card {
+            background: linear-gradient(135deg, #121212 0%, #1a1a1a 100%);
+            border: 1px solid rgba(255, 149, 0, 0.2);
+            padding: 16px;
+            border-radius: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .streak-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .streak-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .streak-flame-icon {
+            color: var(--neon-orange);
+            animation: flame-burn 1.2s infinite alternate ease-in-out;
+        }
+        @keyframes flame-burn {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,149,0,0.4)); }
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(255,149,0,0.8)); }
+        }
+        .streak-title-text {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: var(--font-en);
+            color: var(--neon-orange);
+        }
+        .streak-map-container {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glass);
+        }
+        .streak-day-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+        .streak-circle-svg { width: 32px; height: 32px; }
+        .streak-circle-svg circle { fill: none; stroke-width: 3; }
+        .streak-circle-svg .bg-circle { stroke: rgba(255, 255, 255, 0.05); }
+        .streak-circle-svg .fill-circle {
+            stroke: var(--neon-orange);
+            stroke-dasharray: 88;
+            stroke-dashoffset: 88;
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .streak-day-node.completed .fill-circle { stroke-dashoffset: 0; }
+        .streak-day-node.completed .center-dot { fill: var(--neon-orange); }
+        .streak-day-node .center-dot { fill: rgba(255,255,255,0.1); transition: fill 0.3s ease; }
+        .streak-day-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .streak-day-node.completed .streak-day-label { color: var(--text-white); }
+
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .exercise-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--card-glass);
+            border: 1px solid var(--border-glass);
+            padding: 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        .exercise-card.active-workout {
+            border-color: var(--neon-green);
+            background: rgba(217, 255, 87, 0.03);
+        }
+        
+        /* ===== GIF thumbnail fix ===== */
+        .thumb-wrapper, .main-img-wrapper {
+            position: relative;
+            background: linear-gradient(135deg, #1a1a1a, #262626);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .thumb-wrapper { width: 65px; height: 65px; border-radius: 16px; flex-shrink: 0; }
+        .main-img-wrapper { width: 100%; height: 240px; border-radius: 28px; margin-bottom: 20px; flex-shrink: 0; }
+
+        .exercise-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: inherit;
+        }
+
+        .main-workout-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Spinner shown while GIF loads */
+        .gif-loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: var(--neon-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            z-index: 1;
+        }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .exercise-details { flex: 1; padding-left: 70px; text-align: right; }
+        .exercise-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text-white); }
+        .exercise-details p { font-size: 12px; color: var(--text-muted); }
+        
+        .ex-meta-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+            align-items: center;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .badge-difficulty {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-difficulty.beginner { background: rgba(0, 229, 255, 0.1); color: var(--neon-blue); }
+        .badge-difficulty.intermediate { background: rgba(219, 255, 87, 0.1); color: var(--neon-green); }
+        .badge-difficulty.advanced { background: rgba(255, 149, 0, 0.1); color: var(--neon-orange); }
+
+        .badge-calories {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .action-btns-container {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .fav-btn, .youtube-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+        .fav-btn { color: var(--text-muted); }
+        .fav-btn.active { color: var(--neon-orange); }
+
+        /* ===== New Play Button Style (replaces YouTube icon) ===== */
+        .youtube-btn {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 59, 48, 0.15);
+            border: 1px solid rgba(255, 59, 48, 0.35) !important;
+            border-radius: 50%;
+            color: var(--neon-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .youtube-btn:hover {
+            background: rgba(255, 59, 48, 0.3);
+            transform: scale(1.15);
+            box-shadow: 0 0 12px rgba(255,59,48,0.4);
+        }
+        .play-triangle {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 5px 0 5px 9px;
+            border-color: transparent transparent transparent var(--neon-red);
+            margin-right: -2px;
+            flex-shrink: 0;
+        }
+
+        /* ===== YouTube Modal ===== */
+        .yt-modal-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(12px);
+            z-index: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+        .yt-modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .yt-modal-box {
+            width: 100%;
+            max-width: 380px;
+            background: rgba(10,10,10,0.95);
+            border: 1px solid rgba(255,59,48,0.3);
+            border-top: 3px solid var(--neon-red);
+            border-radius: 28px;
+            overflow: hidden;
+            transform: scale(0.88) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .yt-modal-overlay.show .yt-modal-box {
+            transform: scale(1) translateY(0);
+        }
+        .yt-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .yt-modal-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+        .yt-close-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .yt-close-btn:hover { background: rgba(255,59,48,0.15); color: var(--neon-red); }
+        .yt-exercise-name {
+            padding: 14px 20px 4px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-white);
+            text-align: right;
+        }
+        .yt-exercise-sub {
+            padding: 0 20px 16px 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+        .yt-thumbnail-area {
+            margin: 0 16px;
+            border-radius: 18px;
+            overflow: hidden;
+            position: relative;
+            background: #0f0f0f;
+            cursor: pointer;
+        }
+        .yt-thumbnail-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .yt-thumbnail-area:hover .yt-thumbnail-img {
+            transform: scale(1.03);
+        }
+        .yt-play-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.35);
+            transition: background 0.3s ease;
+        }
+        .yt-thumbnail-area:hover .yt-play-overlay {
+            background: rgba(0,0,0,0.5);
+        }
+        .yt-play-btn-circle {
+            width: 64px; height: 64px;
+            background: var(--neon-red);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba(255,59,48,0.6);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .yt-thumbnail-area:hover .yt-play-btn-circle {
+            transform: scale(1.1);
+            box-shadow: 0 0 45px rgba(255,59,48,0.8);
+        }
+        .yt-play-triangle-big {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 12px 0 12px 22px;
+            border-color: transparent transparent transparent white;
+            margin-right: -4px;
+        }
+        .yt-actions {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+        }
+        .yt-btn-watch {
+            flex: 1;
+            background: var(--neon-red);
+            color: white;
+            border: none;
+            padding: 13px 16px;
+            border-radius: 16px;
+            font-family: var(--font-ar);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+        .yt-btn-watch:hover { background: #e02820; transform: scale(1.02); }
+        .yt-btn-cancel {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-muted);
+            padding: 13px 16px;
+            border-radius: 16px;
+            font-family: var(--font-ar);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .yt-btn-cancel:hover { background: rgba(255,255,255,0.08); }
+        /* ===== End YouTube Modal ===== */
+
+        .fallback-thumb, .fallback-main {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1A1A1A, #262626);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            color: var(--neon-green);
+            z-index: 3;
+        }
+        .fallback-thumb { border-radius: 16px; }
+        .fallback-main { border-radius: 28px; gap: 12px; border: 1px dashed rgba(255,255,255,0.1); }
+        .fallback-main span { color: var(--text-white); font-weight: 600; font-size: 14px; text-align: center; padding: 0 10px; }
+
+        .animate-pulse-dumbbell {
+            animation: pulse-icon 1.8s infinite ease-in-out;
+        }
+        @keyframes pulse-icon {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.15); opacity: 1; color: var(--neon-orange); }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+
+        .progress-circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin: 20px 0;
+        }
+        .progress-svg { transform: rotate(-90deg); }
+        .progress-svg circle { fill: none; stroke-width: 12; stroke-linecap: round; }
+        .progress-svg .bg { stroke: rgba(255, 255, 255, 0.04); }
+        .progress-svg .progress {
+            stroke: var(--neon-orange);
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .circle-center-text { position: absolute; text-align: center; }
+        .circle-center-text h1 { font-size: 32px; font-weight: 700; }
+
+        .meals-chart-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 120px;
+            margin: 20px 0;
+            padding-top: 10px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .meal-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .meal-bar-track {
+            width: 16px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-glass);
+        }
+        .meal-bar-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(360deg, var(--neon-orange), var(--neon-green));
+            border-radius: 20px;
+            transition: height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .meal-bar-label { font-size: 11px; color: var(--text-muted); }
+
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: var(--text-white);
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .input-field:focus { outline: none; border-color: var(--neon-green); }
+
+        .btn-sm {
+            padding: 12px 16px; border-radius: 16px; border: none; font-family: inherit;
+            font-weight: 600; cursor: pointer; transition: var(--transition); width: 100%;
+        }
+        .btn-primary { background: var(--neon-green); color: var(--bg-color); }
+        .btn-stop { background: #ff453a; color: white; flex: 1; }
+        
+        .timer-control-group { display: flex; gap: 10px; margin-top: 12px; }
+
+        .custom-dialog-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+            z-index: 500; display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 24px;
+        }
+        .custom-dialog-overlay.show { opacity: 1; pointer-events: auto; }
+        .custom-dialog-box {
+            background: rgba(7, 7, 7, 0.95); border: 1px solid var(--border-glass);
+            border-top: 3px solid var(--neon-green); border-radius: 28px; padding: 24px;
+            width: 100%; max-width: 340px; text-align: center; transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .custom-dialog-overlay.show .custom-dialog-box { transform: scale(1); }
+        .dialog-btn {
+            background: var(--neon-green); color: var(--bg-color); border: none;
+            padding: 12px 24px; border-radius: 16px; font-weight: 700; width: 100%; cursor: pointer;
+        }
+
+        .custom-selector-container { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+        .selector-option {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-glass);
+            padding: 12px 16px; border-radius: 16px; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between; transition: var(--transition);
+        }
+        .selector-option.selected { border-color: var(--neon-green); background: rgba(217, 255, 87, 0.05); }
+        .selector-radio { width: 18px; height: 18px; border: 2px solid var(--text-muted); border-radius: 50%; }
+        .selector-option.selected .selector-radio { border-color: var(--neon-green); background: var(--neon-green); }
+
+        .profile-header { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 24px; text-align: center; }
+        .profile-avatar-large { width: 95px; height: 95px; border-radius: 50%; object-fit: cover; border: 3px solid var(--neon-green); }
+
+        .bottom-nav {
+            position: absolute; bottom: 24px; left: 24px; right: 24px; height: 72px;
+            background: rgba(7, 7, 7, 0.85); border: 1px solid var(--border-glass);
+            backdrop-filter: blur(24px); border-radius: 24px; display: flex;
+            justify-content: space-around; align-items: center; z-index: 10;
+        }
+        .nav-item { color: var(--text-muted); cursor: pointer; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .nav-item.active { color: var(--neon-green); }
+
+        .sets-row-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .set-row {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass);
+            padding: 10px 14px; border-radius: 14px; text-align: right;
+        }
+        .set-row.done { border-color: rgba(217, 255, 87, 0.3); background: rgba(217, 255, 87, 0.03); }
+        .set-check-btn { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .set-row.done .set-check-btn { background: var(--neon-green); border-color: var(--neon-green); color: var(--bg-color); }
+
+        .workout-table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .workout-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 13px;
+        }
+        .workout-table th {
+            background: rgba(217, 255, 87, 0.06);
+            color: var(--neon-green);
+            padding: 12px 10px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-glass);
+        }
+        .workout-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-glass);
+            color: var(--text-white);
+        }
+        .workout-table tr:last-child td { border-bottom: none; }
+        .table-input {
+            width: 55px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            color: var(--neon-orange);
+            padding: 4px 6px;
+            font-family: var(--font-en);
+            font-weight: 600;
+            text-align: center;
+        }
+        .table-input:focus { outline: none; border-color: var(--neon-green); }
+
+        /* YouTube button in workout detail page */
+        .yt-detail-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px;
+            background: rgba(255,59,48,0.1);
+            border: 1px solid rgba(255,59,48,0.25);
+            border-radius: 16px;
+            color: var(--neon-red);
+            font-family: var(--font-ar);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 16px;
+        }
+        .yt-detail-btn:hover {
+            background: rgba(255,59,48,0.18);
+            border-color: rgba(255,59,48,0.5);
+            transform: scale(1.01);
+        }
+
+        .course-card {
+            background: linear-gradient(145deg, rgba(30,30,30,0.6) 0%, rgba(15,15,15,0.8) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 16px;
+        }
+        .course-card:hover {
+            border-color: var(--neon-green);
+            background: linear-gradient(145deg, rgba(40,40,40,0.7) 0%, rgba(20,20,20,0.9) 100%);
+        }
+        .course-badge {
+            background: rgba(217, 255, 87, 0.1);
+            color: var(--neon-green);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .course-badge.vip {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--neon-orange);
+        }
+
+        .share-card-preview {
+            background: linear-gradient(135deg, #070707 0%, #171717 100%);
+            border: 2px dashed var(--neon-green);
+            padding: 20px;
+            border-radius: 24px;
+            text-align: center;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="bg-glow"></div>
+        
+        <!-- YouTube Modal -->
+        <div class="yt-modal-overlay" id="ytModalOverlay">
+            <div class="yt-modal-box">
+                <div class="yt-modal-header">
+                    <div class="yt-modal-title">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--neon-red);border-radius:4px;">
+                            <span style="width:0;height:0;border-style:solid;border-width:5px 0 5px 10px;border-color:transparent transparent transparent white;margin-right:-2px;"></span>
+                        </span>
+                        شرح التمرين بالفيديو
+                    </div>
+                    <button class="yt-close-btn" onclick="closeYtModal()">
+                        <i data-lucide="x" style="width:16px; height:16px;"></i>
+                    </button>
+                </div>
+                <div class="yt-exercise-name" id="ytModalExName">اسم التمرين</div>
+                <div class="yt-exercise-sub" id="ytModalExSub">التفاصيل</div>
+                <div class="yt-thumbnail-area" onclick="openYtExternalLink()">
+                    <img id="ytModalThumb" class="yt-thumbnail-img" src="" alt="YouTube Thumbnail" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22180%22><rect fill=%22%231a1a1a%22 width=%22320%22 height=%22180%22/></svg>'">
+                    <div class="yt-play-overlay">
+                        <div class="yt-play-btn-circle">
+                            <div class="yt-play-triangle-big"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="yt-actions">
+                    <button class="yt-btn-watch" onclick="openYtExternalLink()">
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:rgba(255,255,255,0.25);border-radius:3px;flex-shrink:0;">
+                            <span style="width:0;height:0;border-style:solid;border-width:4px 0 4px 8px;border-color:transparent transparent transparent white;margin-right:-1px;"></span>
+                        </span>
+                        شوف الشرح على يوتيوب
+                    </button>
+                    <button class="yt-btn-cancel" onclick="closeYtModal()">إغلاق</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Dialog -->
+        <div class="custom-dialog-overlay" id="customAppDialog">
+            <div class="custom-dialog-box">
+                <div style="width:56px; height:56px; background:rgba(219,255,87,0.1); color:var(--neon-green); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px auto;">
+                    <i data-lucide="check-circle-2" style="width: 28px; height: 28px;"></i>
+                </div>
+                <div class="dialog-title" id="appDialogTitle" style="font-size:18px; font-weight:700; margin-bottom:8px;">حفظ التغييرات</div>
+                <div class="dialog-desc" id="appDialogDesc" style="font-size:13px; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">تم التحديث بنجاح</div>
+                <button class="dialog-btn" onclick="closeAppDialogView()">استمرار</button>
+            </div>
+        </div>
+
+        <!-- Skeleton Loader -->
+        <div class="skeleton-loader" id="skeletonLoader">
+            <div class="skeleton-block" style="height: 50px; width: 60%;"></div>
+            <div class="skeleton-block" style="height: 120px; margin-top: 10px;"></div>
+            <div class="stats-grid">
+                <div class="skeleton-block" style="height: 90px;"></div>
+                <div class="skeleton-block" style="height: 90px;"></div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+
+            <!-- HOME PAGE -->
+            <div class="page active" id="homePage">
+                <div class="header-section">
+                    <div class="user-info">
+                        <h2 id="displayUserName">مرحباً، مصطفى</h2>
+                        <p>جاهز لكسر الأرقام اليوم؟</p>
+                    </div>
+                    <div><img src="" class="profile-img" id="displayUserAvatar" alt="Avatar"></div>
+                </div>
+
+                <div class="streak-card">
+                    <div class="streak-header">
+                        <div style="text-align: right;">
+                            <h4 style="font-size:14px; font-weight:700;">الاستمرارية والالتزام المتتالي</h4>
+                            <p style="color:var(--text-muted); font-size:12px;">أكمل التمارين يومياً للحفاظ على النار المشتعلة</p>
+                        </div>
+                        <div class="streak-counter">
+                            <i data-lucide="flame" class="streak-flame-icon" style="width:24px; height:24px;"></i>
+                            <span class="streak-title-text" id="streakDaysCount">0 DAYS</span>
+                        </div>
+                    </div>
+                    <div class="streak-map-container" id="streakHeatmap"></div>
+                </div>
+
+                <div class="card banner-card">
+                    <div class="banner-icon"><i data-lucide="zap"></i></div>
+                    <div>
+                        <h4>الوضع والهدف الحالي</h4>
+                        <p id="displayUserGoal">المحافظة على الوزن الحالي تثبيت</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card stat-box">
+                        <div class="stat-header">
+                            <i data-lucide="flame" style="color: var(--neon-orange); width:16px;"></i>
+                            <span>السعرات اليومية</span>
+                        </div>
+                        <div class="stat-value" id="homeCalValue">1500</div>
+                        <div class="stat-sub">kcal / <span id="homeCalGoal">2000</span></div>
+                    </div>
+                    <div class="card stat-box">
+                        <div class="stat-header">
+                            <i data-lucide="scale" style="color: var(--neon-green); width:16px;"></i>
+                            <span>الوزن الحالي</span>
+                        </div>
+                        <div class="stat-value" id="homeWeightValue">68 كغم</div>
+                        <div class="stat-sub" id="homeHeightValue">الطول: 175 سم</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px;">
+                    <h3 style="font-size: 16px; margin-bottom: 12px; text-align: right;" id="exerciseListTitle">قائمة التمارين المتكاملة</h3>
+                    
+                    <div class="search-container">
+                        <input type="text" class="search-field" id="exerciseSearchInput" placeholder="ابحث عن تمرينك هنا..." oninput="handleSearch()">
+                        <i data-lucide="search" class="search-icon" style="width: 20px; height: 20px;"></i>
+                    </div>
+
+                    <div class="filter-tabs">
+                        <button class="filter-btn active" id="btn-all" onclick="filterExercises('all')">الكل</button>
+                        <button class="filter-btn" id="btn-fav" onclick="filterExercises('fav')">المفضلة</button>
+                        <button class="filter-btn" id="btn-gym" onclick="filterExercises('gym')">تمارين جيم</button>
+                        <button class="filter-btn" id="btn-home" onclick="filterExercises('home')">تمارين بيت</button>
+                    </div>
+
+                    <div class="muscle-filter-tabs">
+                        <button class="muscle-btn active" id="m-all" onclick="filterByMuscle('all')">كل العضلات</button>
+                        <button class="muscle-btn" id="m-chest" onclick="filterByMuscle('chest')">صدر</button>
+                        <button class="muscle-btn" id="m-back" onclick="filterByMuscle('back')">ظهر</button>
+                        <button class="muscle-btn" id="m-shoulders" onclick="filterByMuscle('shoulders')">أكتاف</button>
+                        <button class="muscle-btn" id="m-legs" onclick="filterByMuscle('legs')">أرجل</button>
+                        <button class="muscle-btn" id="m-abs" onclick="filterByMuscle('abs')">بطن</button>
+                        <button class="muscle-btn" id="m-cardio" onclick="filterByMuscle('cardio')">كارديو</button>
+                    </div>
+
+                    <div class="exercise-list" id="exerciseContainer"></div>
+                </div>
+            </div>
+
+            <!-- COURSES PAGE -->
+            <div class="page" id="coursesPage">
+                <div class="header-section">
+                    <div class="user-info">
+                        <h2>الكورسات التدريبية الخاصة</h2>
+                        <p>اختر كورس الكابتن المفضل لديك وابدأ التحدي</p>
+                    </div>
+                </div>
+
+                <div id="coursesContainer">
+                    <div class="course-card" onclick="openCourseExercises('captain_abdullah')">
+                        <div style="text-align: right;">
+                            <span class="course-badge">كورس حصري</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--text-white);"> النسونجي عبدالله</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">تمارين تفاعلية متكاملة للأداء الخارق والتحمل الكلي</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.04); padding: 12px; border-radius: 50%; color: var(--neon-green);">
+                            <i data-lucide="award"></i>
+                        </div>
+                    </div>
+
+                    <div class="course-card" onclick="openCourseExercises('mustafa_beast')">
+                        <div style="text-align: right;">
+                            <span class="course-badge vip">كورس مصطفى المعضل</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--text-white);">الضخامة والانفجار العضلي</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">تمارين مركبة متقدمة جدا مخصصة لتدمير وتضخيم الألياف للفل العالي.</p>
+                        </div>
+                        <div style="background: rgba(255,149,0,0.1); padding: 12px; border-radius: 50%; color: var(--neon-orange);">
+                            <i data-lucide="zap"></i>
+                        </div>
+                    </div>
+
+                    <div class="course-card" onclick="openCourseExercises('captain_ali_shred')">
+                        <div style="text-align: right;">
+                            <span class="course-badge" style="background:rgba(0,229,255,0.1); color:var(--neon-blue);">كورس التنشيف</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--text-white);">Shred</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">حرق دهون فائق السرعة مع نحت السكس باك وإبراز التفاصيل العضلية المخفية.</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.04); padding: 12px; border-radius: 50%; color: var(--neon-blue);">
+                            <i data-lucide="flame"></i>
+                        </div>
+                    </div>
+
+                    <div class="course-card" onclick="openCourseExercises('captain_sajjad_home')">
+                        <div style="text-align: right;">
+                            <span class="course-badge">حديد منزلي</span>
+                            <h3 style="font-size: 18px; font-weight: 700; color: var(--text-white);">Dumbbells Only</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">كورس كامل مخصص للبيت باستخدام دامبلز فقط لبناء جسم رياضي متناسق وجذاب.</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.04); padding: 12px; border-radius: 50%; color: var(--neon-green);">
+                            <i data-lucide="home"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COURSE DETAIL PAGE -->
+            <div class="page" id="courseDetailPage">
+                <div class="header-section" style="margin-bottom: 16px;">
+                    <div class="user-info" style="text-align: right;">
+                        <button onclick="navigateTo('courses')" style="background: none; border: none; color: var(--neon-green); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                            <i data-lucide="arrow-right" style="width: 16px;"></i> رجوع للكورسات
+                        </button>
+                        <h2 id="courseDetailTitle">اسم الكورس</h2>
+                        <p id="courseDetailDesc">تمارين هذا الكورس</p>
+                    </div>
+                </div>
+                <div class="exercise-list" id="courseExerciseContainer"></div>
+            </div>
+
+            <!-- ACTIVITY PAGE -->
+            <div class="page" id="activityPage">
+                <div class="header-section"><div class="user-info"><h2>السعرات والنشاط اليومي</h2></div></div>
+                <div class="card" style="text-align: center;">
+                    <span style="color: var(--neon-orange); font-size: 13px; font-weight: 600;">المستهلك الفعلي اليوم</span>
+                    <h1 style="font-size: 32px; margin-top: 4px; font-family: var(--font-en);" id="activityCalDisplay">1500 kcal</h1>
+                    
+                    <div class="progress-circle-container">
+                        <svg class="progress-svg" width="180" height="180">
+                            <circle class="bg" cx="90" cy="90" r="80"></circle>
+                            <circle class="progress" id="activityCircle" cx="90" cy="90" r="80"></circle>
+                        </svg>
+                        <div class="circle-center-text">
+                            <h1 id="activityPercentDisplay">75%</h1>
+                            <p>من الهدف الإجمالي</p>
+                        </div>
+                    </div>
+
+                    <div class="meals-chart-container">
+                        <div class="meal-bar-wrapper">
+                            <div class="meal-bar-track"><div class="meal-bar-fill" id="bar-breakfast"></div></div>
+                            <span class="meal-bar-label">ريوق</span>
+                        </div>
+                        <div class="meal-bar-wrapper">
+                            <div class="meal-bar-track"><div class="meal-bar-fill" id="bar-lunch"></div></div>
+                            <span class="meal-bar-label">غداء</span>
+                        </div>
+                        <div class="meal-bar-wrapper">
+                            <div class="meal-bar-track"><div class="meal-bar-fill" id="bar-dinner"></div></div>
+                            <span class="meal-bar-label">عشاء</span>
+                        </div>
+                        <div class="meal-bar-wrapper">
+                            <div class="meal-bar-track"><div class="meal-bar-fill" id="bar-snack"></div></div>
+                            <span class="meal-bar-label">سناك</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size:15px; margin-bottom:14px; text-align: right;">توزيع السعرات الذكي على الوجبات</h3>
+                    <div class="stats-grid" style="margin-bottom: 10px;">
+                        <div class="input-group" style="margin-bottom:10px;"><label>الريوق (kcal)</label><input type="number" class="input-field" id="inputBreakFast" value="400" oninput="calcTotalFromMeals()"></div>
+                        <div class="input-group" style="margin-bottom:10px;"><label>الغداء (kcal)</label><input type="number" class="input-field" id="inputLunch" value="600" oninput="calcTotalFromMeals()"></div>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom: 10px;">
+                        <div class="input-group" style="margin-bottom:10px;"><label>العشاء (kcal)</label><input type="number" class="input-field" id="inputDinner" value="400" oninput="calcTotalFromMeals()"></div>
+                        <div class="input-group" style="margin-bottom:10px;"><label>السناك (kcal)</label><input type="number" class="input-field" id="inputSnack" value="100" oninput="calcTotalFromMeals()"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>الهدف اليومي الإجمالي للسعرات</label>
+                        <input type="number" class="input-field" id="inputGoalCalories" value="2000">
+                    </div>
+                    <button class="btn-sm btn-primary" onclick="updateCaloriesData(true)">حفظ وتحديث السعرات الإجمالية</button>
+                </div>
+            </div>
+
+            <!-- WORKOUT PAGE -->
+            <div class="page" id="workoutPage">
+                <div class="main-img-wrapper" id="mainImgWrapper">
+                    <div class="fallback-main">
+                        <i data-lucide="dumbbell" class="animate-pulse-dumbbell" style="width:60px; height:60px; stroke-width:1.5;"></i>
+                        <span>اختر تمرينًا لعرضه هنا يا بطل</span>
+                    </div>
+                </div>
+
+                <h2 style="font-size: 22px; font-weight: 700; text-align: right;" id="workoutMainTitle">اختر تمرين لبدء العرض</h2>
+                <p style="color: var(--neon-green); font-size: 13px; margin: 6px 0 16px 0; text-align: right;" id="workoutMainSub">0 جولات • 0 تكرار</p>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px; text-align: right;" id="workoutMainDesc">يرجى الضغط على أي تمرين من القائمة الرئيسية أو الكورسات ليتم عرضه هنا بالكامل.</p>
+
+                <!-- YouTube Button in workout detail -->
+                <button class="yt-detail-btn" id="ytDetailBtn" onclick="openYtModalFromDetail()" style="display:none;">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--neon-red);border-radius:4px;flex-shrink:0;">
+                        <span style="width:0;height:0;border-style:solid;border-width:5px 0 5px 9px;border-color:transparent transparent transparent white;margin-right:-2px;"></span>
+                    </span>
+                    شوف شرح التمرين على يوتيوب
+                </button>
+
+                <div class="card">
+                    <h4 style="text-align: right; margin-bottom: 12px; font-size:15px; display:flex; align-items:center; justify-content:flex-start; gap:6px; flex-direction:row-reverse;">
+                        <i data-lucide="table" style="color:var(--neon-green); width:18px;"></i>
+                        <span>جدول تفاصيل الجولات والأوزان</span>
+                    </h4>
+                    <div class="workout-table-container">
+                        <table class="workout-table">
+                            <thead>
+                                <tr>
+                                    <th>الجولة</th>
+                                    <th>التكرار</th>
+                                    <th>الوزن (كغم)</th>
+                                    <th>التركيز والأداء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workoutTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 style="text-align: right; margin-bottom: 10px;">عداد الجولات السريع (تأكيد الإنجاز)</h4>
+                    <div class="sets-row-container" id="workoutSetsContainer"></div>
+                </div>
+
+                <div class="card" style="background: rgba(255,255,255,0.02); text-align: center;">
+                    <div style="font-family: var(--font-en); font-size: 34px; font-weight: 700; letter-spacing: 1px;" id="stopwatchDisplay">00:01:00</div>
+                    <div class="timer-control-group">
+                        <button class="btn-sm btn-primary" id="startTimerBtn" style="flex:2; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="toggleStopwatch()">
+                            <i data-lucide="play" style="width:16px; height:16px;"></i><span id="startTimerText">ابدأ الراحة</span>
+                        </button>
+                        <button class="btn-sm btn-stop" id="resetTimerBtn" style="display: none;" onclick="resetStopwatch()">إعادة تعيين</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE PAGE -->
+            <div class="page" id="profilePage">
+                <div class="profile-header">
+                    <img src="" class="profile-avatar-large" id="profileAvatarLarge" alt="Large Avatar">
+                    <div>
+                        <h2 id="profileNameTitle">مصطفى</h2>
+                        <p style="color:var(--text-muted); font-size:12px;">تعديل الطول والوزن والأهداف بدون فقدان البيانات</p>
+                    </div>
+                </div>
+
+                <div class="card share-card-preview" id="shareCardLayout">
+                    <h3 style="color: var(--neon-green); font-size:16px; margin-bottom:4px;">كارت مشاركة الإنجاز</h3>
+                    <p style="font-size:12px; color: var(--text-muted); margin-bottom:12px;">خذ لقطة شاشة وشارك بطولتك اليوم</p>
+                    <div style="background: rgba(255,255,255,0.02); padding:14px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                        <h2 style="font-size:18px;" id="shareCardTitle">عاش الوش يا بطل</h2>
+                        <p style="font-size:13px; color: var(--neon-orange); margin:6px 0;" id="shareCardStats">حرق اليوم: 1500 / 2000 سعرة</p>
+                        <span style="font-size:11px; color: var(--text-muted);">تم التدريب بنجاح بواسطة Fitness Pro</span>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 16px;">
+                    <div class="input-group">
+                        <label>الاسم الشخصي</label>
+                        <input type="text" class="input-field" id="inputProfileName" value="مصطفى">
+                    </div>
+
+                    <div class="input-group">
+                        <label>الجنس</label>
+                        <div class="custom-selector-container">
+                            <div class="selector-option selected" id="gender-male" onclick="selectGenderOption('male')"><span>شاب</span><div class="selector-radio"></div></div>
+                            <div class="selector-option" id="gender-female" onclick="selectGenderOption('female')"><span>بنت</span><div class="selector-radio"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>الهدف الرياضي الحالي</label>
+                        <div class="custom-selector-container">
+                            <div class="selector-option" id="goal-lose" onclick="selectGoalOption('lose', 'إنقاص الوزن والتنشيف العضلي')"><span>إنقاص الوزن والتنشيف العضلي</span><div class="selector-radio"></div></div>
+                            <div class="selector-option selected" id="goal-maintain" onclick="selectGoalOption('maintain', 'المحافظة على الوزن الحالي تثبيت')"><span>المحافظة على الوزن الحالي تثبيت</span><div class="selector-radio"></div></div>
+                            <div class="selector-option" id="goal-gain" onclick="selectGoalOption('gain', 'زيادة الوزن وبناء كتلة عضلية تضخيم')"><span>زيادة الوزن وبناء كتلة عضلية تضخيم</span><div class="selector-radio"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid" style="margin-bottom:0;">
+                        <div class="input-group"><label>الوزن الحقيقي (كغم)</label><input type="number" class="input-field" id="inputProfileWeight" value="68"></div>
+                        <div class="input-group"><label>الطول الحالي (سم)</label><input type="number" class="input-field" id="inputProfileHeight" value="165"></div>
+                    </div>
+
+                    <button class="btn-sm btn-primary" style="margin-top:20px;" onclick="saveProfileData()">حفظ التغييرات بشكل نهائي</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" id="nav-home" onclick="navigateTo('home')"><i data-lucide="home"></i></div>
+            <div class="nav-item" id="nav-courses" onclick="navigateTo('courses')"><i data-lucide="graduation-cap"></i></div>
+            <div class="nav-item" id="nav-activity" onclick="navigateTo('activity')"><i data-lucide="bar-chart-2"></i></div>
+            <div class="nav-item" id="nav-workout" onclick="navigateTo('workout')"><i data-lucide="dumbbell"></i></div>
+            <div class="nav-item" id="nav-profile" onclick="navigateTo('profile')"><i data-lucide="user"></i></div>
+        </div>
+    </div>
+
+    <script>
+        const avatarPhotos = {
+            male: "https://images.unsplash.com/photo-1608155686393-8fdd966d784d?q=80&w=150&auto=format&fit=crop",
+            female: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150&auto=format&fit=crop"
+        };
+
+        const exercisesData = {
+            // ===== HOME EXERCISES =====
+            h1: { type: 'home', muscle: 'chest', difficulty: 'beginner', calories: 45, title: "شناو اعتيادي (Push-Ups)", sub: "4 جولات • 15 تكرار", desc: "التمرين الأساسي لبناء وتضخيم الصدر العام والترايسيبس بوزن الجسم.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif", youtube: "https://www.youtube.com/watch?v=IODxDxX7oi4", sets: 4, reps: "15", focus: "أداء محكوم وثبات الجذع" },
+            h2: { type: 'home', muscle: 'chest', difficulty: 'intermediate', calories: 50, title: "شناو عريض (Wide Grip Push-Ups)", sub: "3 جولات • 12 تكرار", desc: "تركيز كامل على توسيع وضخ الدم في عضلة الصدر الخارجية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Wide-grip-push-ups.gif", youtube: "https://www.youtube.com/watch?v=rr6eFNNDQdc", sets: 3, reps: "12", focus: "تركيز على التمدد الخارجي للصدر" },
+            h3: { type: 'home', muscle: 'chest', difficulty: 'beginner', calories: 40, title: "شناو مرتفع (Incline Push-Ups)", sub: "3 جولات • 15 تكرار", desc: "تكون اليدين على جرباية أو ميز، يستهدف بكفاءة عضلات الصدر السفلية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif", youtube: "https://www.youtube.com/watch?v=Me9bHFAxnCs", sets: 3, reps: "15", focus: "عصر أسفل الصدر" },
+            h4: { type: 'home', muscle: 'chest', difficulty: 'advanced', calories: 55, title: "شناو منخفض (Decline Push-Ups)", sub: "3 جولات • 12 تكرار", desc: "تكون القدمين على مكان مرتفع، ممتاز لاستهداف وملء الصدر العلوي.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Decline-Push-Up.gif", youtube: "https://www.youtube.com/watch?v=SKPab2YC8BE", sets: 3, reps: "12", focus: "قوة دفع للصدر العلوي" },
+            h5: { type: 'home', muscle: 'shoulders', difficulty: 'intermediate', calories: 48, title: "شناو الأكتاف (Pike Push-Ups)", sub: "3 جولات • 10 تكرار", desc: "رفع الحوض للأعلى والدفع برأسك لأسفل، تركيز جبار على الأكتاف الأمامية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Pike-Push-up.gif", youtube: "https://www.youtube.com/watch?v=sposDXWEB0A", sets: 3, reps: "10", focus: "عزل وتشغيل عضلات الكتف" },
+            h6: { type: 'home', muscle: 'chest', difficulty: 'advanced', calories: 52, title: "شناو ضيق (Diamond Push-Ups)", sub: "3 جولات • 10 تكرار", desc: "تقريب اليدين على شكل جوهرة لتركيز هائل على الترايسيبس ومنتصف الصدر.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Diamond-Push-up.gif", youtube: "https://www.youtube.com/watch?v=pD3mD6Wgy88", sets: 3, reps: "10", focus: "انقباض حاد للترايسيبس" },
+            h7: { type: 'home', muscle: 'back', difficulty: 'beginner', calories: 35, title: "تمرين الظهر (Prone Y-T-W Raises)", sub: "3 جولات • 15 تكرار", desc: "الاستلقاء على البطن وتحريك الذراعين كالحروف لتقوية أعلى الظهر والأكتاف الخلفية.", img: "https://fitnessprogramer.com/wp-content/uploads/2022/11/YTW-Raises.gif", youtube: "https://www.youtube.com/watch?v=XhI2mGf8gEw", sets: 3, reps: "15", focus: "عصر ألياف أعلى الظهر" },
+            h8: { type: 'home', muscle: 'back', difficulty: 'beginner', calories: 38, title: "تمرين سوبرمان (Superman)", sub: "3 جولات • 15 تكرار", desc: "رفع الصدر والأرجل معاً أثناء النوم على البطن لتقوية أسفل الظهر والقطنية.", img: "https://fitnessprogramer.com/wp-content/uploads/2022/02/Superman-Exercise.gif", youtube: "https://www.youtube.com/watch?v=z6PJMT2y8GQ", sets: 3, reps: "15", focus: "ثبات لمدة ثانيتين في الأعلى" },
+            h9: { type: 'home', muscle: 'abs', difficulty: 'beginner', calories: 30, title: "طحن المعدة التقليدي (Crunches)", sub: "4 جولات • 20 تكرار", desc: "التمرين الأساسي والأقوى لشد وتقسيم عضلات البطن والمعدة العلوية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Crunch.gif", youtube: "https://www.youtube.com/watch?v=Xyd_fa5zoEU", sets: 4, reps: "20", focus: "انقباض كامل للمعدة بدون أرجحة" },
+            h10: { type: 'home', muscle: 'abs', difficulty: 'intermediate', calories: 32, title: "رفع الأرجل للمعدة السفلى (Leg Raises)", sub: "4 جولات • 15 تكرار", desc: "تمرين مستلقي لرفع الساقين للأعلى، ممتاز للتخلص من ترهلات أسفل البطن.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Lying-Leg-Raise.gif", youtube: "https://www.youtube.com/watch?v=l4kQd9eWclE", sets: 4, reps: "15", focus: "نزول بطيء ومحكوم للرجلين" },
+            h11: { type: 'home', muscle: 'abs', difficulty: 'intermediate', calories: 40, title: "تمرين الثبات (Plank)", sub: "3 جولات • 60 ثانية", desc: "بناء قوة عضلات الجذع بالكامل وزيادة التحمل البدني الثابت.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Forearm-Plank.gif", youtube: "https://www.youtube.com/watch?v=pSHjTRCQxIw", sets: 3, reps: "60 ثانية", focus: "استقامة الظهر والبطن مشدودة" },
+            h12: { type: 'home', muscle: 'abs', difficulty: 'beginner', calories: 35, title: "التواء روسي للخواصر (Russian Twists)", sub: "3 جولات • 20 تكرار", desc: "تحريك الجذع يميناً ويساراً لشد عضلات البطن الجانبية والمنشارية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Russian-Twist.gif", youtube: "https://www.youtube.com/watch?v=wkD8rjkodUI", sets: 3, reps: "20", focus: "لمس الأرض بكل جانب بتركيز" },
+            h13: { type: 'home', muscle: 'legs', difficulty: 'beginner', calories: 45, title: "اسكوات حر اعتيادي (Air Squats)", sub: "4 جولات • 20 تكرار", desc: "تمرين بوزن الجسم جبار لتقوية الفخذ الأمامي والمؤخرة وزيادة اللياقة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/BODYWEIGHT-SQUAT.gif", youtube: "https://www.youtube.com/watch?v=rMvwVtlqjTE", sets: 4, reps: "20", focus: "نزول كامل مع الحفاظ على استقامة الظهر" },
+            h14: { type: 'home', muscle: 'legs', difficulty: 'beginner', calories: 42, title: "تمرين الطعن المتبادل (Lunges)", sub: "3 جولات • 12 تكرار", desc: "التقدم بخطوة للأمام والنزول، ممتاز لتناسق توازن عضلات الأفخاذ.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Bodyweight-Lunge.gif", youtube: "https://www.youtube.com/watch?v=QOVaHwm-Q6U", sets: 3, reps: "12", focus: "ركبة الرجل الأمامية لا تتجاوز الأصابع" },
+            h15: { type: 'home', muscle: 'legs', difficulty: 'advanced', calories: 55, title: "اسكوات بلغاري (Bulgarian Split Squats)", sub: "3 جولات • 10 تكرار", desc: "وضع رجل واحدة على مكان مرتفع والنزول بالأخرى، حمل وتحدي قوي جداً للفخذ.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Bodyweight-Bulgarian-Split-Squat.gif", youtube: "https://www.youtube.com/watch?v=2C-uNgKwPLE", sets: 3, reps: "10", focus: "تركيز الحمل على الساق الأمامية" },
+            h16: { type: 'home', muscle: 'legs', difficulty: 'beginner', calories: 35, title: "جسر الحوض للخلفيات (Glute Bridges)", sub: "3 جولات • 15 تكرار", desc: "الاستلقاء ورفع الحوض للأعلى، تمرين مخصص لتقوية الفخذ الخلفي والمؤخرة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Glute-Bridge.gif", youtube: "https://www.youtube.com/watch?v=wPM8co452C0", sets: 3, reps: "15", focus: "عصر العضلات الخلفية في الأعلى" },
+            h17: { type: 'home', muscle: 'legs', difficulty: 'beginner', calories: 25, title: "رفع السمانة واقفاً (Calf Raises)", sub: "4 جولات • 20 تكرار", desc: "الصعود والنزول على أطراف أصابع القدم لتقوية ونحت عضلات البطة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/07/Bodyweight-Standing-Calf-Raise.gif", youtube: "https://www.youtube.com/watch?v=-M4-G8p8fmc", sets: 4, reps: "20", focus: "مدى حركي كامل صعوداً ونزولاً" },
+            h18: { type: 'home', muscle: 'cardio', difficulty: 'beginner', calories: 60, title: "قفز فتح وغلق (Jumping Jacks)", sub: "3 جولات • 45 ثانية", desc: "تمرين هوائي ممتاز لرفع نبضات القلب وحرق الدهون بكفاءة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Jumping-Jack.gif", youtube: "https://www.youtube.com/watch?v=c4DAnQ6DtF8", sets: 3, reps: "45 ثانية", focus: "وتيرة سريعة ومتواصلة" },
+            h19: { type: 'home', muscle: 'cardio', difficulty: 'advanced', calories: 80, title: "تمرين البوربي الشامل (Burpees)", sub: "3 جولات • 10 تكرار", desc: "دمج الشناو مع القفزة، تمرين لكامل الجسم يرفع قوة التحمل واللياقة البدنية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Burpee.gif", youtube: "https://www.youtube.com/watch?v=dZgVxmf6jkA", sets: 3, reps: "10", focus: "سرعة الأداء مع المحافظة على التكنيك" },
+            h20: { type: 'home', muscle: 'cardio', difficulty: 'intermediate', calories: 65, title: "تسلق الجبل السريع (Mountain Climbers)", sub: "3 جولات • 30 ثانية", desc: "وضعية الشناو وتحريك الأرجل سريعاً نحو الصدر، ممتاز للياقة والبطن السفلي.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Mountain-Climber.gif", youtube: "https://www.youtube.com/watch?v=zT-9L3CEcmk", sets: 3, reps: "30 ثانية", focus: "ثبات الأكتاف وتحريك سريع للأرجل" },
+            // ===== NEW HOME EXERCISES =====
+            h21: { type: 'home', muscle: 'back', difficulty: 'intermediate', calories: 50, title: "سحب أستك (Resistance Band Row)", sub: "3 جولات • 15 تكرار", desc: "استخدام الاستك لعمل سحب ظهر منزلي فعال يستهدف المجنص ووسط الظهر.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Resistance-Band-Row.gif", youtube: "https://www.youtube.com/watch?v=VzvA9a0t0UY", sets: 3, reps: "15", focus: "سحب الكوع للخلف وعصر الظهر" },
+            h22: { type: 'home', muscle: 'shoulders', difficulty: 'beginner', calories: 30, title: "دوائر الأكتاف (Arm Circles)", sub: "3 جولات • 30 ثانية", desc: "تدوير الذراعين بدوائر كبيرة وصغيرة لتسخين وتقوية الأكتاف ومفاصلها.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Arm-Circle.gif", youtube: "https://www.youtube.com/watch?v=v4lPk7IQKLY", sets: 3, reps: "30 ثانية", focus: "دوران سلس ومتزن في الاتجاهين" },
+            h23: { type: 'home', muscle: 'abs', difficulty: 'advanced', calories: 50, title: "V-Up للبطن الكامل", sub: "3 جولات • 15 تكرار", desc: "رفع الجذع والساقين معاً لأعلى في وقت واحد، تمرين نخبة لشد البطن بالكامل.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/V-Up.gif", youtube: "https://www.youtube.com/watch?v=iP2fjvG0g3w", sets: 3, reps: "15", focus: "لمس أصابع القدم في الذروة" },
+            h24: { type: 'home', muscle: 'cardio', difficulty: 'intermediate', calories: 70, title: "ركض في المكان عالي الركبة (High Knees)", sub: "3 جولات • 45 ثانية", desc: "الركض في المكان مع رفع الركبتين بشكل متناوب لمستوى الخصر أو أعلى.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/High-Knees.gif", youtube: "https://www.youtube.com/watch?v=ZZZoCNMU48U", sets: 3, reps: "45 ثانية", focus: "رفع الركبة فوق مستوى الحوض" },
+            h25: { type: 'home', muscle: 'legs', difficulty: 'intermediate', calories: 48, title: "قفز السكوات (Jump Squats)", sub: "3 جولات • 15 تكرار", desc: "إضافة قفزة انفجارية للأعلى عند نهاية السكوات لتطوير قوة الأرجل الانفجارية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Jump-Squat.gif", youtube: "https://www.youtube.com/watch?v=Azl5tkCzDcc", sets: 3, reps: "15", focus: "هبوط ناعم ومتزن على الكعبين" },
+            // ===== GYM EXERCISES =====
+            g1: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 70, title: "بنش برس بالبار مستوي (Barbell Bench Press)", sub: "4 جولات • 10 تكرار", desc: "ملك تمارين الصدر لبناء القوة العامة وزيادة الضخامة العضلية للهيكل الأساسي.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif", youtube: "https://www.youtube.com/watch?v=rT7DgCr-3ps", sets: 4, reps: "10", focus: "النزول ببطء للمنتصف والدفع بقوة" },
+            g2: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 72, title: "ضغط دامبلز عالي (Incline Dumbbell Press)", sub: "4 جولات • 12 تكرار", desc: "استهداف مباشر واحترافي لملء وتكثيف زوايا الصدر العلوية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif", youtube: "https://www.youtube.com/watch?v=8iPEnT_ZccM", sets: 4, reps: "12", focus: "مدى حركي كامل وتمدد عميق للصدر" },
+            g3: { type: 'gym', muscle: 'chest', difficulty: 'beginner', calories: 55, title: "فراشة جهاز للصدر (Chest Fly Machine)", sub: "3 جولات • 12 تكرار", desc: "تمرين عزل فتاك لتقطيع وعصر ألياف الصدر وإبراز الخط المنتصف.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lever-Pec-Deck-Fly.gif", youtube: "https://www.youtube.com/watch?v=Z57CtZ6K48E", sets: 3, reps: "12", focus: "عصر الصدر وثبات ثانية في الأمام" },
+            g4: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 58, title: "كيبل كروس أوفر (Cable Crossover)", sub: "3 جولات • 12 تكرار", desc: "توفير مقاومة مستمرة على كامل زوايا الصدر لتعريض وتفصيل شكل العضلة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif", youtube: "https://www.youtube.com/watch?v=taI4XcYGpAI", sets: 3, reps: "12", focus: "تحكم كامل وقت الرجوع التدريجي" },
+            g5: { type: 'gym', muscle: 'back', difficulty: 'beginner', calories: 65, title: "سحب عالي للجهاز (Lat Pulldown)", sub: "4 جولات • 10 تكرار", desc: "تمرين الظهر الأساسي لتعريض عضلات المجنص وبناء شكل الـ V الجبار.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif", youtube: "https://www.youtube.com/watch?v=CAwf7n6Luuc", sets: 4, reps: "10", focus: "السحب بالكوع والتركيز على الظهر" },
+            g6: { type: 'gym', muscle: 'back', difficulty: 'intermediate', calories: 68, title: "سحب أرضي بالكيبل (Seated Cable Row)", sub: "4 جولات • 12 تكرار", desc: "تمرين رائع لبناء سمك وعمق عضلات وسط الظهر وألياف الترابيس.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif", youtube: "https://www.youtube.com/watch?v=GZbfZ033f74", sets: 4, reps: "12", focus: "إرجاع الأكتاف للخلف وعصر الظهر" },
+            g7: { type: 'gym', muscle: 'back', difficulty: 'intermediate', calories: 70, title: "منشار بالدامبلز (Dumbbell Row)", sub: "3 جولات • 10 تكرار", desc: "عزل كامل لكل جهة من الظهر على حدة لتطوير التوازن والقوة العضلية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif", youtube: "https://www.youtube.com/watch?v=dFzUjzfih70", sets: 3, reps: "10", focus: "سحب الدامبل باتجاه الخصر وليس الصدر" },
+            g8: { type: 'gym', muscle: 'back', difficulty: 'beginner', calories: 40, title: "جهاز القطنية (Hyperextension)", sub: "3 جولات • 15 تكرار", desc: "تقوية عضلات أسفل الظهر والقطنية لحماية العمود الفقري ومنع الإصابات.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/45-degree-hyperextension.gif", youtube: "https://www.youtube.com/watch?v=5_ej7S7wJu0", sets: 3, reps: "15", focus: "صعود متزن دون مبالغة في الانحناء للخلف" },
+            g9: { type: 'gym', muscle: 'shoulders', difficulty: 'advanced', calories: 75, title: "ضغط أكتاف بالبار (Overhead Barbell Press)", sub: "4 جولات • 10 تكرار", desc: "بناء الكتلة العضلية والقوة التفجيرية للأكتاف الأمامية والجانبية واقفاً أو جالساً.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Barbell-Military-Press.gif", youtube: "https://www.youtube.com/watch?v=2yjwXtZSTCo", sets: 4, reps: "10", focus: "تأمين أسفل الظهر مشدوداً وغير مقوس" },
+            g10: { type: 'gym', muscle: 'shoulders', difficulty: 'beginner', calories: 45, title: "نشر جانبي بالدامبلز (Dumbbell Lateral Raise)", sub: "4 جولات • 12 تكرار", desc: "تمرين العزل الأساسي لمنح الكتف المظهر الدائري العريض ثلاثي الأبعاد.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif", youtube: "https://www.youtube.com/watch?v=3VcKaXatru0", sets: 4, reps: "12", focus: "الرفع بمستوى الأكتاف والنزول ببطء" },
+            g11: { type: 'gym', muscle: 'shoulders', difficulty: 'intermediate', calories: 48, title: "نشر خلفي جهاز (Rear Delt Fly)", sub: "3 جولات • 12 تكرار", desc: "استهداف وعزل دقيق لعضلة الكتف الخلفية لتعديل استقامة مظهر الأكتاف.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Rear-Delt-Fly.gif", youtube: "https://www.youtube.com/watch?v=6yMdhi2LyS0", sets: 3, reps: "12", focus: "عزل تام لعضلات الكتف الخلفي" },
+            g12: { type: 'gym', muscle: 'shoulders', difficulty: 'beginner', calories: 35, title: "هز أكتاف بالدامبلز (Dumbbell Shrugs)", sub: "3 جولات • 15 تكرار", desc: "تمرين مخصص لتضخيم وتقوية عضلات الترابيس العلوية وسماكة الرقبة الخلفية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shrug.gif", youtube: "https://www.youtube.com/watch?v=g6qBQ4Lf1Co", sets: 3, reps: "15", focus: "عصر الترابيس بالأعلى لثانية" },
+            g13: { type: 'gym', muscle: 'back', difficulty: 'beginner', calories: 50, title: "بايسبس بالبار المستوي (Barbell Bicep Curl)", sub: "4 جولات • 12 تكرار", desc: "التمرين الأقوى لتفجير وتضخيم كتلة عضلة البايسبس الأمامية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif", youtube: "https://www.youtube.com/watch?v=QZEqB6wUPxQ", sets: 4, reps: "12", focus: "تثبيت الكوع بجانب الجسم تماماً" },
+            g14: { type: 'gym', muscle: 'back', difficulty: 'beginner', calories: 52, title: "همر بالدامبلز (Hammer Curls)", sub: "3 جولات • 12 تكرار", desc: "يستهدف العضلة العضدية والساعد لإعطاء الذراع سماكة جانبية جبارة وقبضة حديدية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Hammer-Curl.gif", youtube: "https://www.youtube.com/watch?v=zC3nLlEvin4", sets: 3, reps: "12", focus: "صعود ونزول محكوم بدون أرجحة للظهر" },
+            g15: { type: 'gym', muscle: 'chest', difficulty: 'beginner', calories: 48, title: "ترايسبس بالحبل (Triceps Pushdown)", sub: "4 جولات • 12 تكرار", desc: "عزل وتنشيف مثالي للرؤوس الخارجية لعضلة الترايسبس الخلفية لإبراز شكل الحدوة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Pushdown.gif", youtube: "https://www.youtube.com/watch?v=2-LAMcpzODU", sets: 4, reps: "12", focus: "مقاومة مستمرة وفتح الحبل في أسفل الحركة" },
+            g16: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 55, title: "سكال كراشر (Skull Crushers)", sub: "3 جولات • 10 تكرار", desc: "يضع الرأس الطويل للترايسبس تحت تمدد هائل لزيادة الحجم الكلي للذراع.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/EZ-Barbell-Skullcrusher.gif", youtube: "https://www.youtube.com/watch?v=d_KRx7ijJAQ", sets: 3, reps: "10", focus: "الحفاظ على ثبات الكوع متوجهاً للأعلى" },
+            g17: { type: 'gym', muscle: 'legs', difficulty: 'advanced', calories: 85, title: "اسكوات بالبار الخلفي (Barbell Back Squats)", sub: "4 جولات • 10 تكرار", desc: "ملك تمارين الضخامة لبناء قوة تفجيرية للأرجل، الأفخاذ، والمؤخرة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Full-Squat.gif", youtube: "https://www.youtube.com/watch?v=Uv_KzBBp2p4", sets: 4, reps: "10", focus: "نزول مريح مع الحفاظ على سلامة الركبة والظهر" },
+            g18: { type: 'gym', muscle: 'legs', difficulty: 'intermediate', calories: 75, title: "جهاز الدفع رجلي (Leg Press)", sub: "4 جولات • 12 تكرار", desc: "تركيز وحمل ثقيل وعزل تام على عضلات الفخذ الأمامية بدون أي ضغط على أسفل الظهر.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/45-Degree-Leg-Press.gif", youtube: "https://www.youtube.com/watch?v=IZxyjW7MPJQ", sets: 4, reps: "12", focus: "عدم قفل مفصل الركبة نهائياً في الأعلى" },
+            g19: { type: 'gym', muscle: 'legs', difficulty: 'beginner', calories: 50, title: "جهاز الفخذ الخلفي (Leg Curl Machine)", sub: "3 جولات • 12 تكرار", desc: "تنوع فائق لتقوية ونحت الأوتار وعضلات الفخذ الخلفية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Leg-Curl.gif", youtube: "https://www.youtube.com/watch?v=ELOCsoDSmAM", sets: 3, reps: "12", focus: "انقباض كامل وبطء عند الرجوع" },
+            g20: { type: 'gym', muscle: 'legs', difficulty: 'beginner', calories: 35, title: "جهاز بطات جالساً (Seated Calf Raise)", sub: "4 جولات • 15 تكرار", desc: "تركيز دقيق واحترافي لتضخيم ورسم تفاصيل عضلات السمانة السفلى.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Calf-Raise.gif", youtube: "https://www.youtube.com/watch?v=JbyjN75S99s", sets: 4, reps: "15", focus: "مدى حركي كامل صعوداً ونزولاً" },
+            // ===== NEW GYM EXERCISES =====
+            g21: { type: 'gym', muscle: 'back', difficulty: 'advanced', calories: 90, title: "ديدليفت تقليدي (Conventional Deadlift)", sub: "4 جولات • 6 تكرار", desc: "ملك جميع التمارين، يستهدف الظهر الكامل والأرجل والمؤخرة لبناء قوة جبارة وكتلة عضلية ضخمة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Barbell-Deadlift.gif", youtube: "https://www.youtube.com/watch?v=op9kVnSso6Q", sets: 4, reps: "6", focus: "الظهر مستقيم والقضيب قريب من الجسم دائماً" },
+            g22: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 62, title: "ضغط دامبلز مستوي (Flat Dumbbell Press)", sub: "4 جولات • 10 تكرار", desc: "بديل البنش بالبار للحصول على مدى حركي أوسع وتقوية مستقلة لكل جانب من الصدر.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif", youtube: "https://www.youtube.com/watch?v=VmBQmm8tSsc", sets: 4, reps: "10", focus: "تمدد عميق للصدر في أسفل الحركة" },
+            g23: { type: 'gym', muscle: 'legs', difficulty: 'advanced', calories: 80, title: "رومانيان ديدليفت (Romanian Deadlift)", sub: "4 جولات • 10 تكرار", desc: "تمرين نخبة للفخذ الخلفي والمؤخرة، يتطلب إبقاء الظهر مستقيماً وتحسس الشد بكل تكرار.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Romanian-Deadlift.gif", youtube: "https://www.youtube.com/watch?v=JCXUYuzwNrM", sets: 4, reps: "10", focus: "الشعور بالشد الحاد في الفخذ الخلفي" },
+            g24: { type: 'gym', muscle: 'abs', difficulty: 'intermediate', calories: 38, title: "كيبل كرنش (Cable Crunch)", sub: "3 جولات • 15 تكرار", desc: "كرنش بمقاومة الكيبل لزيادة شدة التحميل على البطن وإبراز التقسيمات العضلية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/06/Cable-Crunch.gif", youtube: "https://www.youtube.com/watch?v=2fbujeH3F0E", sets: 3, reps: "15", focus: "الانحناء من البطن وليس من الرقبة" },
+            g25: { type: 'gym', muscle: 'shoulders', difficulty: 'intermediate', calories: 52, title: "ضغط أرنولد (Arnold Press)", sub: "3 جولات • 12 تكرار", desc: "تمرين أرنولد الشهير الذي يدمج الدوران مع الدفع لاستهداف الرؤوس الثلاثة للكتف دفعةً واحدة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Arnold-Press.gif", youtube: "https://www.youtube.com/watch?v=6Z15_WdXmVw", sets: 3, reps: "12", focus: "دوران الرسغ الكامل من الداخل للخارج" },
+            g26: { type: 'gym', muscle: 'back', difficulty: 'advanced', calories: 78, title: "بار بيل رو (Barbell Bent-Over Row)", sub: "4 جولات • 10 تكرار", desc: "تمرين الضخامة الأول للظهر بالبار، يستهدف المجنص الكامل ووسط الظهر بحمل ثقيل.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Row.gif", youtube: "https://www.youtube.com/watch?v=FWJR5Ve8bnQ", sets: 4, reps: "10", focus: "الظهر مستقيم 45 درجة والسحب للبطن" },
+            g27: { type: 'gym', muscle: 'chest', difficulty: 'intermediate', calories: 60, title: "بنش منخفض بالدامبلز (Decline Dumbbell Press)", sub: "3 جولات • 12 تكرار", desc: "استهداف حصري لأسفل الصدر وإبراز التقعر الجمالي لعضلة الصدر السفلية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/09/Decline-Dumbbell-Press.gif", youtube: "https://www.youtube.com/watch?v=LfyQBUKR8SE", sets: 3, reps: "12", focus: "عصر أسفل الصدر بقوة عند الذروة" },
+            g28: { type: 'gym', muscle: 'legs', difficulty: 'beginner', calories: 55, title: "جهاز الفخذ الأمامي (Leg Extension)", sub: "3 جولات • 15 تكرار", desc: "عزل تام لعضلة الرباعية الأمامية للفخذ وتحسين تفاصيل وتقسيمات العضلة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lever-Leg-Extension.gif", youtube: "https://www.youtube.com/watch?v=YyvSfVjQeL0", sets: 3, reps: "15", focus: "عصر الرباعية تماماً في القمة لثانية" },
+        };
+
+        const coursesData = {
+            captain_abdullah: {
+                title: "كورس كابتن عبدالله",
+                desc: "كورس متكامل مبني على أعلى شدة تدريبية لشد وحرق وتضخيم الألياف العضلية وتطوير قوة التحمل الكلية للمحترفين.",
+                exercises: {
+                    c1: { title: "جري سريع على التردميل / كارديو", sub: "1 جولة • مستمر", desc: "تسخين حركي لرفع نبضات القلب وتهيئة كامل المفاصل لحرق الدهون وضخ الدم الكثيف.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Treadmill-Running.gif", youtube: "https://www.youtube.com/watch?v=8i3Vrd957sE", sets: 1, reps: "مستمر", focus: "رفع اللياقة البدنية والسرعة الزائدة" },
+                    c2: { title: "سحب عالي للظهر قبضة واسعة", sub: "4 جولات • 12 تكرار", desc: "توسيع زوايا عضلة المجنص وتطوير شكل المثلث للظهر مع عزل تام لعضلات الذراع.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Lat-Pulldown.gif", youtube: "https://www.youtube.com/watch?v=CAwf7n6Luuc", sets: 4, reps: "12", focus: "التركيز على السحب بواسطة الكوع" },
+                    c3: { title: "تجميع صدر مستوي بالدامبلز", sub: "4 جولات • 10 تكرار", desc: "تمرين مركب لزيادة الضخامة العضلية في منتصف وأطراف الصدر العام بمدى حركي كامل.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif", youtube: "https://www.youtube.com/watch?v=VmBQmm8tSsc", sets: 4, reps: "10", focus: "عصر الصدر في الأعلى بقوة" },
+                    c4: { title: "كرنش بطن وعزل المعدة", sub: "3 جولات • حتى الفشل", desc: "تمرين انقباضي فتاك لنحت وشد عضلات البطن العلوية والوسطى للوصول للفشل العضلي الكلي.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Crunch.gif", youtube: "https://www.youtube.com/watch?v=Xyd_fa5zoEU", sets: 3, reps: "حتى الفشل", focus: "عزل كامل للمعدة بدون أرجحة" },
+                    c5: { title: "رفع رجلين للبطن السفلية مستلقياً", sub: "3 جولات • حتى الفشل", desc: "يستهدف التخلص من ترهلات ونحت تقاسيم جدار البطن السفلي بكفاءة تامة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Lying-Leg-Raise.gif", youtube: "https://www.youtube.com/watch?v=l4kQd9eWclE", sets: 3, reps: "حتى الفشل", focus: "نزول بطيء ومحكوم للرجلين" },
+                    c6: { title: "باك اكستنشن ظهر سفلي (القطنية)", sub: "3 جولات • 15 تكرار", desc: "تقوية عضلات أسفل الظهر ومنع الإصابات وتحسين استقامة العمود الفقري الكلي.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/45-degree-hyperextension.gif", youtube: "https://www.youtube.com/watch?v=5_ej7S7wJu0", sets: 3, reps: "15", focus: "حماية وتقوية القطنية مع ثبات للأعلى" }
+                }
+            },
+            mustafa_beast: {
+                title: "كورس مصطفى المعضل",
+                desc: "كورس تفجيري مخصص للضخامة القصوى، زيادة أوزان مرعبة، واستهداف زوايا صعبة لتدمير الألياف العضلية.",
+                exercises: {
+                    mb1: { title: "بنش برس مستوي بالبار الثقيل", sub: "4 جولات • 8 تكرار", desc: "الدخول بأقصى قوة هرمية لتدمير خلايا الصدر وتحفيز هرمونات البناء التفجيري.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Bench-Press.gif", youtube: "https://www.youtube.com/watch?v=rT7DgCr-3ps", sets: 4, reps: "8", focus: "النزول بـ 3 ثواني والدفع المتفجر" },
+                    mb2: { title: "منشار ظهر بالدامبل العملاق", sub: "4 جولات • 10 تكرار", desc: "تمرين مخصص لتعريض اللاتس وزيادة سماكة وسط الظهر بوزن حر جبار لتحفيز النمو الكثيف.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif", youtube: "https://www.youtube.com/watch?v=dFzUjzfih70", sets: 4, reps: "10", focus: "سحب كامل وعصر الظهر بالأعلى" },
+                    mb3: { title: "ضغط أكتاف بالبار واقفاً", sub: "3 جولات • 8 تكرار", desc: "بناء أكتاف ثلاثية الأبعاد صلبة كالحجر مع تحسين توازن الجذع والقوة البدنية العامة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Barbell-Military-Press.gif", youtube: "https://www.youtube.com/watch?v=2yjwXtZSTCo", sets: 3, reps: "8", focus: "بطن مشدود وعدم تقويس أسفل الظهر" },
+                    mb4: { title: "اسكوات حر خلفي بالبار الثقيل", sub: "4 جولات • 8 تكرار", desc: "تمرين مركب لزيادة هرمونات البناء وتضخيم عضلات الأفخاذ الأمامية والخلفية بكفاءة عالية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Full-Squat.gif", youtube: "https://www.youtube.com/watch?v=Uv_KzBBp2p4", sets: 4, reps: "8", focus: "نزول كامل مع الحفاظ على استقامة الظهر" },
+                    mb5: { title: "كيرل بايسبس بار مستوي هرمي", sub: "3 جولات • 10 تكرار", desc: "تمرين أساسي لبناء وتكوير الكتلة الأمامية لعضلة البايسبس مع زيادة تدريجية في الوزن.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif", youtube: "https://www.youtube.com/watch?v=QZEqB6wUPxQ", sets: 3, reps: "10", focus: "ثبات الكوع تماماً بجانب الجذع" },
+                    mb6: { title: "Skull Crushers للترايسبس بالبار", sub: "3 جولات • 10 تكرار", desc: "يستهدف الرأس الطويل لعضلة الترايسبس الخلفية تحت تمدد هائل لزيادة الحجم الكلي للذراع.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/EZ-Barbell-Skullcrusher.gif", youtube: "https://www.youtube.com/watch?v=d_KRx7ijJAQ", sets: 3, reps: "10", focus: "الحفاظ على ثبات الأكواع متجهة للأعلى" }
+                }
+            },
+            captain_ali_shred: {
+                title: "Shred",
+                desc: "كورس ديناميكي سريع الاشتعال يدمج الكارديو المكثف بتمارين العزل عالي التكرار للتنشيف المثالي وإبراز العضلات المخفية.",
+                exercises: {
+                    ca1: { title: "تمرين البوربي الشامل وعالي النبض", sub: "3 جولات • 12 تكرار", desc: "تمرين تفجيري لحرق مخازن الكلايكوجين ورفع معدلات الحرق للقمة السريعة بكفاءة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Burpee.gif", youtube: "https://www.youtube.com/watch?v=dZgVxmf6jkA", sets: 3, reps: "12", focus: "سرعة ومرونة متواصلة بدون توقف" },
+                    ca2: { title: "كيبل كروس أوفر لنحت الصدر السفلي", sub: "4 جولات • 15 تكرار", desc: "استهداف خط الصدر وعزل الدهون من زوايا الصدر السفلية لإعطاء شكل ناشف ومحدد.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Crossover.gif", youtube: "https://www.youtube.com/watch?v=taI4XcYGpAI", sets: 4, reps: "15", focus: "ثبات ثانية كاملة وقت انقباض العضلة" },
+                    ca3: { title: "تسلق الجبل السريع مع بلانك ديناميكي", sub: "3 جولات • 45 ثانية", desc: "تدمير شامل لدهون الخواصر وأسفل المعدة مع شد متواصل لعضلات الجذع الحركية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Mountain-Climber.gif", youtube: "https://www.youtube.com/watch?v=zT-9L3CEcmk", sets: 3, reps: "45 ثانية", focus: "سرعة حركية وثبات تام للأكتاف" },
+                    ca4: { title: "رفرفة جانبية بالكيبل للأكتاف", sub: "4 جولات • 15 تكرار", desc: "عزل وتشريح الفص الجانبي للكتف مع الحفاظ على ضغط مستمر طوال مدى الحركة الجانبية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Cable-Lateral-Raise.gif", youtube: "https://www.youtube.com/watch?v=3VcKaXatru0", sets: 4, reps: "15", focus: "أداء بطيء ومحكوم في مرحلة النزول" },
+                    ca5: { title: "قفز الحبل السريع المتواصل", sub: "3 جولات • 60 ثانية", desc: "تمرين هوائي فائق لحرق السعرات الزائدة وتحسين اللياقة البدنية وتنسيق حركة الجسم الكلية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/05/Jump-Rope.gif", youtube: "https://www.youtube.com/watch?v=u3zgHI8Qnq8", sets: 3, reps: "60 ثانية", focus: "الحفاظ على إيقاع قفز سريع ومنتظم" }
+                }
+            },
+            captain_sajjad_home: {
+                title: "Dumbbells Only",
+                desc: "تحدي منزلي احترافي متكامل لا يحتاج لأجهزة الجيم، مبني بالكامل على تكتيك الدامبلز الحر لبناء جسم متناسق وقوي.",
+                exercises: {
+                    cs1: { title: "ضغط صدر بالدامبلز على الأرض", sub: "4 جولات • 15 تكرار", desc: "بديل بنش الجيم في البيت، فعال جداً لبناء عضلات الصدر وزيادة القوة العضلية العامة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif", youtube: "https://www.youtube.com/watch?v=v70L2GAsA_s", sets: 4, reps: "15", focus: "لمس الأكواع للأرض بلطف ثم الدفع" },
+                    cs2: { title: "اسكوات حر بالدامبلز للأفخاذ", sub: "4 جولات • 12 تكرار", desc: "امسك الدامبلز بجانبك وانزل بشكل متزن لتقوية الأرجل الأمامية والخلفية بالمنزل بكفاءة عالية.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Squat.gif", youtube: "https://www.youtube.com/watch?v=mGMRvTid76U", sets: 4, reps: "12", focus: "الحفاظ على استقامة كامل الظهر" },
+                    cs3: { title: "رفرفة أكتاف جانبي بالدامبلز", sub: "4 جولات • 15 تكرار", desc: "تمرين العزل المنزلي الأقوى لإعطاء الأكتاف العرض الجذاب وتدوير المظهر الخارجي بدقة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif", youtube: "https://www.youtube.com/watch?v=3VcKaXatru0", sets: 4, reps: "15", focus: "أداء بطيء بدون أرجحة الجسم" },
+                    cs4: { title: "سحب همر بالدامبلز لعضلات الظهر", sub: "4 جولات • 12 تكرار", desc: "تمرين منزلي لزيادة كفاءة وعمق عضلات وسط الظهر والمجنص باستخدام المقاومة الحرة.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Two-Arm-Dumbbell-Row.gif", youtube: "https://www.youtube.com/watch?v=VKFeB7K9L5E", sets: 4, reps: "12", focus: "سحب الدامبلز باتجاه الحوض بتركيز" },
+                    cs5: { title: "تبادل بايسبس بالدامبلز جالسا", sub: "3 جولات • 12 تكرار", desc: "تمرين عزل وتكوير لعضلة البايسبس الأمامية مع لف الساعد في أعلى الحركة للحصول على أعلى انقباض.", img: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Alternate-Bicep-Curl.gif", youtube: "https://www.youtube.com/watch?v=sAq_oLPBiYk", sets: 3, reps: "12", focus: "التحكم الكامل بالوزن صعودا ونزولا" }
+                }
+            }
+        };
+
+        // ============================================================
+        // YouTube Modal Logic
+        // ============================================================
+        let currentYtUrl = "";
+        let currentYtTitle = "";
+
+        function getYtVideoId(url) {
+            if (!url) return null;
+            const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+            return match ? match[1] : null;
+        }
+
+        function openYtModal(url, title, sub) {
+            if (!url) return;
+            currentYtUrl = url;
+            currentYtTitle = title;
+
+            const videoId = getYtVideoId(url);
+            const thumbUrl = videoId
+                ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+                : "";
+
+            document.getElementById('ytModalExName').innerText = title || "شرح التمرين";
+            document.getElementById('ytModalExSub').innerText = sub || "";
+            document.getElementById('ytModalThumb').src = thumbUrl;
+
+            document.getElementById('ytModalOverlay').classList.add('show');
+            lucide.createIcons();
+        }
+
+        function closeYtModal() {
+            document.getElementById('ytModalOverlay').classList.remove('show');
+        }
+
+        function openYtExternalLink() {
+            if (currentYtUrl) {
+                window.open(currentYtUrl, '_blank');
+            }
+        }
+
+        function openYtModalFromDetail() {
+            const title = document.getElementById('workoutMainTitle').innerText;
+            const sub = document.getElementById('workoutMainSub').innerText;
+            openYtModal(currentDetailYtUrl, title, sub);
+        }
+
+        let currentDetailYtUrl = "";
+
+        // ============================================================
+        // App State
+        // ============================================================
+        let userData = {
+            name: "مصطفى", gender: "male", goalValue: "maintain", goalText: "المحافظة على الوزن الحالي تثبيت",
+            weight: "68", height: "165", todayCalories: 1500, goalCalories: 2000,
+            meals: { breakfast: 400, lunch: 600, dinner: 400, snack: 100 },
+            favorites: [],
+            streak: { count: 0, lastCheckInDate: null, history: [false, false, false, false, false, false, false] }
+        };
+
+        let timerInterval = null;
+        let isTimerRunning = false;
+        const defaultRestTime = 60; 
+        let timeRemaining = defaultRestTime;
+        let currentFilterType = 'all';
+        let currentMuscleFilter = 'all';
+        let selectedExerciseId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSavedData(); 
+            checkAndUpdateStreak();
+            generateExercisesHTML();
+
+            document.body.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+            document.getElementById('ytModalOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeYtModal();
+            });
+
+            setTimeout(() => {
+                const loader = document.getElementById('skeletonLoader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => { loader.style.display = 'none'; }, 400);
+                }
+                updateCaloriesData(false);
+            }, 600);
+        });
+
+        function loadSavedData() {
+            const savedData = localStorage.getItem("fitness_pro_data");
+            if (savedData) {
+                const parsed = JSON.parse(savedData);
+                userData = { ...userData, ...parsed }; 
+            }
+
+            if(!userData.streak) {
+                userData.streak = { count: 0, lastCheckInDate: null, history: [false, false, false, false, false, false, false] };
+            }
+
+            document.getElementById('inputProfileName').value = userData.name;
+            document.getElementById('inputProfileWeight').value = userData.weight;
+            document.getElementById('inputProfileHeight').value = userData.height;
+            document.getElementById('inputGoalCalories').value = userData.goalCalories;
+
+            if(userData.meals) {
+                document.getElementById('inputBreakFast').value = userData.meals.breakfast || 0;
+                document.getElementById('inputLunch').value = userData.meals.lunch || 0;
+                document.getElementById('inputDinner').value = userData.meals.dinner || 0;
+                document.getElementById('inputSnack').value = userData.meals.snack || 0;
+            }
+
+            document.getElementById('displayUserName').innerText = `مرحباً، ${userData.name}`;
+            document.getElementById('profileNameTitle').innerText = userData.name;
+            document.getElementById('homeWeightValue').innerText = `${userData.weight} كغم`;
+            document.getElementById('homeHeightValue').innerText = `الطول: ${userData.height} سم`;
+            document.getElementById('displayUserGoal').innerText = userData.goalText;
+
+            const finalAvatarUrl = avatarPhotos[userData.gender];
+            document.getElementById('displayUserAvatar').src = finalAvatarUrl;
+            document.getElementById('profileAvatarLarge').src = finalAvatarUrl;
+
+            selectGenderOption(userData.gender, false);
+            selectGoalOption(userData.goalValue, userData.goalText, false);
+            updateShareCard();
+            renderStreakHeatmap();
+        }
+
+        function saveAllToLocalStorage() {
+            localStorage.setItem("fitness_pro_data", JSON.stringify(userData));
+            updateShareCard();
+        }
+
+        function checkAndUpdateStreak() {
+            const todayStr = new Date().toDateString();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toDateString();
+
+            if (userData.streak.lastCheckInDate === yesterdayStr) {
+                // مستمرة
+            } else if (userData.streak.lastCheckInDate !== todayStr) {
+                userData.streak.count = 0;
+                userData.streak.history = [false, false, false, false, false, false, false];
+            }
+            
+            document.getElementById('streakDaysCount').innerText = `${userData.streak.count} DAYS`;
+            saveAllToLocalStorage();
+        }
+
+        function triggerTodayStreakCheckIn() {
+            const todayStr = new Date().toDateString();
+            const currentDayIndex = new Date().getDay(); 
+            
+            let adjustedIndex = currentDayIndex + 1;
+            if(adjustedIndex > 6) adjustedIndex = 0;
+
+            if (userData.streak.lastCheckInDate !== todayStr) {
+                userData.streak.count += 1;
+                userData.streak.lastCheckInDate = todayStr;
+                userData.streak.history[adjustedIndex] = true;
+                
+                saveAllToLocalStorage();
+                checkAndUpdateStreak();
+                renderStreakHeatmap();
+                
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                openCustomAppDialogView("كفو يا بطل الستريك اشتعل", `تم تسجيل جولتك بنجاح اليوم. الستريك الحالي: ${userData.streak.count} أيام متتالية.`);
+            }
+        }
+
+        function renderStreakHeatmap() {
+            const daysNames = ['سبت', 'أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة'];
+            const container = document.getElementById('streakHeatmap');
+            if(!container) return;
+            container.innerHTML = "";
+
+            const history = userData.streak.history || [false, false, false, false, false, false, false];
+
+            daysNames.forEach((day, index) => {
+                const isDone = history[index];
+                const node = document.createElement('div');
+                node.className = `streak-day-node ${isDone ? 'completed' : ''}`;
+                
+                node.innerHTML = `
+                    <svg class="streak-circle-svg" viewBox="0 0 32 32">
+                        <circle class="bg-circle" cx="16" cy="16" r="14"></circle>
+                        <circle class="fill-circle" cx="16" cy="16" r="14" transform="rotate(-90 16 16)"></circle>
+                        <circle class="center-dot" cx="16" cy="16" r="4"></circle>
+                    </svg>
+                    <span class="streak-day-label">${day}</span>
+                `;
+                container.appendChild(node);
+            });
+        }
+
+        // ============================================================
+        // Exercise Card Generation — GIF fix + play button icon
+        // ============================================================
+        function createThumbWrapper(ex) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'thumb-wrapper';
+
+            // Spinner shown while GIF loads
+            const spinner = document.createElement('div');
+            spinner.className = 'gif-loading-spinner';
+            wrapper.appendChild(spinner);
+
+            const img = document.createElement('img');
+            img.className = 'exercise-thumb';
+            img.alt = ex.title;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+
+            img.onload = () => { spinner.remove(); };
+            img.onerror = () => {
+                spinner.remove();
+                img.remove();
+                const fallback = document.createElement('div');
+                fallback.className = 'fallback-thumb';
+                fallback.innerHTML = `<i data-lucide="dumbbell" style="width:22px;height:22px;"></i>`;
+                wrapper.appendChild(fallback);
+                lucide.createIcons();
+            };
+
+            // Slight delay so browser doesn't throttle too many GIFs at once
+            setTimeout(() => { img.src = ex.img; }, 50);
+            wrapper.appendChild(img);
+            return wrapper;
+        }
+
+        function generateExercisesHTML() {
+            const container = document.getElementById('exerciseContainer');
+            if (!container) return;
+            container.innerHTML = "";
+
+            let totalCount = 0;
+            let gymCount = 0;
+            let homeCount = 0;
+
+            Object.keys(exercisesData).forEach(key => {
+                totalCount++;
+                const ex = exercisesData[key];
+                if(ex.type === 'gym') gymCount++;
+                if(ex.type === 'home') homeCount++;
+
+                const isFav = userData.favorites && userData.favorites.includes(key);
+                const isActive = (selectedExerciseId === key) ? 'active-workout' : '';
+
+                const card = document.createElement('div');
+                card.className = `exercise-card ${isActive}`;
+                card.setAttribute('data-type', ex.type);
+                card.setAttribute('id', `ex-${key}`);
+
+                // Thumb
+                const thumbWrapper = createThumbWrapper(ex);
+                thumbWrapper.addEventListener('click', () => openExerciseDetails(key, false));
+                card.appendChild(thumbWrapper);
+
+                // Details
+                const details = document.createElement('div');
+                details.className = 'exercise-details';
+                details.innerHTML = `
+                    <h4>${ex.title}</h4>
+                    <p>${ex.sub}</p>
+                    <div class="ex-meta-row">
+                        <span class="badge-difficulty ${ex.difficulty}">${ex.difficulty === 'beginner' ? 'مبتدئ' : ex.difficulty === 'intermediate' ? 'متوسط' : 'متقدم'}</span>
+                        <span class="badge-calories">حرق ~${ex.calories} سعرة/جولة</span>
+                    </div>
+                `;
+                details.addEventListener('click', () => openExerciseDetails(key, false));
+                card.appendChild(details);
+
+                // Action buttons
+                const actionBtns = document.createElement('div');
+                actionBtns.className = 'action-btns-container';
+
+                // Play/YouTube button — triangle shape, no YouTube icon
+                const ytBtn = document.createElement('button');
+                ytBtn.className = 'youtube-btn';
+                ytBtn.title = 'شرح فيديو';
+                ytBtn.innerHTML = `<div class="play-triangle"></div>`;
+                ytBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openYtModal(ex.youtube, ex.title, ex.sub);
+                });
+                actionBtns.appendChild(ytBtn);
+
+                // Fav button
+                const favBtn = document.createElement('button');
+                favBtn.className = `fav-btn ${isFav ? 'active' : ''}`;
+                favBtn.innerHTML = `<i data-lucide="star" style="width:18px;fill:${isFav ? 'var(--neon-orange)' : 'none'};"></i>`;
+                favBtn.addEventListener('click', (e) => toggleFavorite(e, key));
+                actionBtns.appendChild(favBtn);
+
+                card.appendChild(actionBtns);
+                container.appendChild(card);
+            });
+
+            const listTitle = document.getElementById('exerciseListTitle');
+            if(listTitle) listTitle.innerText = `قائمة التمارين المتكاملة (${totalCount} تمرين)`;
+            
+            document.getElementById('btn-all').innerText = `الكل (${totalCount})`;
+            document.getElementById('btn-gym').innerText = `جيم (${gymCount})`;
+            document.getElementById('btn-home').innerText = `بيت (${homeCount})`;
+            document.getElementById('btn-fav').innerText = `المفضلة (${userData.favorites ? userData.favorites.length : 0})`;
+
+            lucide.createIcons();
+        }
+
+        function toggleFavorite(event, key) {
+            event.stopPropagation(); 
+            if(!userData.favorites) userData.favorites = [];
+            
+            const index = userData.favorites.indexOf(key);
+            if(index > -1) {
+                userData.favorites.splice(index, 1);
+            } else {
+                userData.favorites.push(key);
+            }
+            saveAllToLocalStorage();
+            generateExercisesHTML();
+            applyAdvancedFilters();
+        }
+
+        function openCourseExercises(courseKey) {
+            const course = coursesData[courseKey];
+            document.getElementById('courseDetailTitle').innerText = course.title;
+            document.getElementById('courseDetailDesc').innerText = course.desc;
+
+            const container = document.getElementById('courseExerciseContainer');
+            container.innerHTML = "";
+
+            Object.keys(course.exercises).forEach(key => {
+                const ex = course.exercises[key];
+                const card = document.createElement('div');
+                card.className = "exercise-card";
+                card.addEventListener('click', () => openExerciseDetails(key, true, courseKey));
+
+                // Thumb with GIF fix
+                const thumbWrapper = createThumbWrapper(ex);
+                thumbWrapper.style.pointerEvents = 'none';
+                card.appendChild(thumbWrapper);
+
+                const details = document.createElement('div');
+                details.className = 'exercise-details';
+                details.innerHTML = `
+                    <h4>${ex.title}</h4>
+                    <p style="color:var(--neon-orange);">${ex.sub}</p>
+                `;
+                card.appendChild(details);
+
+                const actionBtns = document.createElement('div');
+                actionBtns.className = 'action-btns-container';
+
+                const ytBtn = document.createElement('button');
+                ytBtn.className = 'youtube-btn';
+                ytBtn.title = 'شرح فيديو';
+                ytBtn.innerHTML = `<div class="play-triangle"></div>`;
+                ytBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openYtModal(ex.youtube, ex.title, ex.sub);
+                });
+                actionBtns.appendChild(ytBtn);
+
+                const dumIcon = document.createElement('i');
+                dumIcon.setAttribute('data-lucide', 'dumbbell');
+                dumIcon.style.cssText = 'color:var(--neon-green);width:18px;';
+                actionBtns.appendChild(dumIcon);
+
+                card.appendChild(actionBtns);
+                container.appendChild(card);
+            });
+
+            lucide.createIcons();
+            navigateTo('courseDetail');
+        }
+
+        function applyAdvancedFilters() {
+            const query = document.getElementById('exerciseSearchInput').value.toLowerCase().trim();
+            
+            Object.keys(exercisesData).forEach(key => {
+                const ex = exercisesData[key];
+                const card = document.getElementById(`ex-${key}`);
+                if (!card) return;
+                
+                const matchesSearch = ex.title.toLowerCase().includes(query) || ex.desc.toLowerCase().includes(query);
+                
+                let matchesType = false;
+                if (currentFilterType === 'all') matchesType = true;
+                else if (currentFilterType === 'fav') matchesType = userData.favorites && userData.favorites.includes(key);
+                else matchesType = ex.type === currentFilterType;
+
+                let matchesMuscle = (currentMuscleFilter === 'all') ? true : (ex.muscle === currentMuscleFilter);
+
+                card.style.display = (matchesSearch && matchesType && matchesMuscle) ? 'flex' : 'none';
+            });
+        }
+
+        function handleSearch() { applyAdvancedFilters(); }
+
+        function filterExercises(type) {
+            currentFilterType = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${type}`).classList.add('active');
+            applyAdvancedFilters();
+        }
+
+        function filterByMuscle(muscleGroup) {
+            currentMuscleFilter = muscleGroup;
+            document.querySelectorAll('.muscle-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`m-${muscleGroup}`).classList.add('active');
+            applyAdvancedFilters();
+        }
+
+        function handleMainImageError(img) {
+            img.style.display = 'none';
+            const fallback = document.createElement('div');
+            fallback.className = 'fallback-main';
+            fallback.innerHTML = `
+                <i data-lucide="dumbbell" class="animate-pulse-dumbbell" style="width:60px;height:60px;stroke-width:1.5;"></i>
+                <span>الصورة التوضيحية قيد المزامنة... التمرين شغال طبيعي يا بطل</span>`;
+            img.parentElement.appendChild(fallback);
+            lucide.createIcons();
+        }
+
+        function selectGenderOption(gender, shouldSave = true) {
+            userData.gender = gender;
+            document.querySelectorAll('[id^="gender-"]').forEach(el => el.classList.remove('selected'));
+            const element = document.getElementById(`gender-${gender}`);
+            if (element) element.classList.add('selected');
+            if (shouldSave) saveAllToLocalStorage();
+        }
+
+        function selectGoalOption(goal, text, shouldSave = true) {
+            userData.goalValue = goal;
+            userData.goalText = text;
+            document.querySelectorAll('[id^="goal-"]').forEach(el => el.classList.remove('selected'));
+            const element = document.getElementById(`goal-${goal}`);
+            if (element) element.classList.add('selected');
+            if (shouldSave) saveAllToLocalStorage();
+        }
+
+        function openCustomAppDialogView(title, description) {
+            document.getElementById('appDialogTitle').innerText = title;
+            document.getElementById('appDialogDesc').innerText = description;
+            document.getElementById('customAppDialog').classList.add('show');
+        }
+
+        function closeAppDialogView() {
+            document.getElementById('customAppDialog').classList.remove('show');
+        }
+
+        function navigateTo(pageId) {
+            if(pageId !== 'workout') resetStopwatch();
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${pageId}Page`).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            if(pageId === 'courseDetail') {
+                document.getElementById(`nav-courses`).classList.add('active');
+            } else if(document.getElementById(`nav-${pageId}`)) {
+                document.getElementById(`nav-${pageId}`).classList.add('active');
+            }
+            
+            document.getElementById('mainContent').scrollTop = 0;
+            if (pageId === 'activity') {
+                updateProgressCircle();
+                updateMealsChart();
+            }
+        }
+
+        function openExerciseDetails(key, isFromCourse = false, courseKey = '') {
+            let data;
+            if(isFromCourse) {
+                data = coursesData[courseKey].exercises[key];
+                selectedExerciseId = null;
+            } else {
+                data = exercisesData[key];
+                selectedExerciseId = key;
+            }
+            
+            currentDetailYtUrl = data.youtube || "";
+            generateExercisesHTML();
+
+            // Main image with spinner
+            const mainImgWrapper = document.getElementById('mainImgWrapper');
+            mainImgWrapper.innerHTML = '';
+
+            const spinner = document.createElement('div');
+            spinner.className = 'gif-loading-spinner';
+            spinner.style.cssText = 'width:40px;height:40px;border-width:4px;';
+            mainImgWrapper.appendChild(spinner);
+
+            const img = document.createElement('img');
+            img.className = 'main-workout-img';
+            img.alt = data.title;
+            img.onload = () => { spinner.remove(); };
+            img.onerror = () => { spinner.remove(); handleMainImageError(img); };
+            setTimeout(() => { img.src = data.img; }, 50);
+            mainImgWrapper.appendChild(img);
+
+            document.getElementById('workoutMainTitle').innerText = data.title;
+            document.getElementById('workoutMainSub').innerText = data.sub;
+            document.getElementById('workoutMainDesc').innerText = data.desc;
+
+            const ytDetailBtn = document.getElementById('ytDetailBtn');
+            ytDetailBtn.style.display = data.youtube ? 'flex' : 'none';
+
+            const totalSets = data.sets || 4;
+            const repsText = data.reps || "12";
+            const focusText = data.focus || "زيادة تدريجية بوزن ثابت وثقيل";
+
+            const tableBody = document.getElementById('workoutTableBody');
+            tableBody.innerHTML = "";
+            for(let i = 1; i <= totalSets; i++) {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${i}</td>
+                        <td style="color:var(--neon-green);font-weight:700;">${repsText}</td>
+                        <td><input type="text" class="table-input" value="${repsText === 'مستمر' || repsText.includes('ثانية') ? '-' : (10 + i * 2.5)}" placeholder="-"></td>
+                        <td style="color:var(--text-muted);">${i === 1 && repsText !== 'مستمر' && !repsText.includes('ثانية') ? 'تسخين حركي وعزل مركز' : focusText}</td>
+                    </tr>
+                `;
+            }
+
+            const setsContainer = document.getElementById('workoutSetsContainer');
+            setsContainer.innerHTML = "";
+            if(repsText === 'مستمر') {
+                setsContainer.innerHTML = `<div class="set-row" id="s-c"><span style="font-size:13px;font-weight:600;">جولة الكارديو المفتوحة</span><span style="color:var(--neon-orange);font-size:12px;">أداء مستمر ومتواصل</span><div class="set-check-btn" onclick="toggleSetStatus('s-c')"><i data-lucide="check" style="width:14px;height:14px;"></i></div></div>`;
+            } else {
+                for(let i = 1; i <= totalSets; i++) {
+                    setsContainer.innerHTML += `
+                        <div class="set-row" id="s-${i}">
+                            <span style="font-size:13px;font-weight:600;">الجولة رقم ${i}</span>
+                            <span style="font-family:var(--font-en);font-size:12px;color:var(--text-muted);">${repsText}</span>
+                            <div class="set-check-btn" onclick="toggleSetStatus('s-${i}')"><i data-lucide="check" style="width:14px;height:14px;"></i></div>
+                        </div>
+                    `;
+                }
+            }
+
+            resetStopwatch(); 
+            lucide.createIcons();
+            navigateTo('workout');
+        }
+
+        function toggleSetStatus(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('done');
+            if(element.classList.contains('done')) triggerTodayStreakCheckIn();
+            if (navigator.vibrate) navigator.vibrate(40); 
+        }
+
+        function toggleStopwatch() {
+            const startBtnText = document.getElementById('startTimerText');
+            const startBtnIcon = document.querySelector('#startTimerBtn i');
+            const resetBtn = document.getElementById('resetTimerBtn');
+
+            if (!isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = true;
+                if (resetBtn) resetBtn.style.display = 'block';
+                if (startBtnText) startBtnText.innerText = 'إيقاف مؤقت';
+                if (startBtnIcon) { startBtnIcon.setAttribute('data-lucide', 'pause'); lucide.createIcons(); }
+
+                timerInterval = setInterval(() => {
+                    if (timeRemaining > 0) {
+                        timeRemaining--;
+                        document.getElementById('stopwatchDisplay').innerText = formatTimeDisplay(timeRemaining);
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        document.getElementById('stopwatchDisplay').innerText = "00:00:00";
+                        if (startBtnText) startBtnText.innerText = 'ابدأ الراحة';
+                        if (startBtnIcon) { startBtnIcon.setAttribute('data-lucide', 'play'); lucide.createIcons(); }
+                        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                        openCustomAppDialogView("انتهت استراحتك يا بطل", "وقت الراحة خلص، ارجع كمل جولاتك للتمرين الحالي بكل قوة وعاش الوش");
+                        timeRemaining = defaultRestTime;
+                    }
+                }, 1000);
+            } else {
+                isTimerRunning = false;
+                if (startBtnText) startBtnText.innerText = 'استئناف الراحة';
+                if (startBtnIcon) { startBtnIcon.setAttribute('data-lucide', 'play'); lucide.createIcons(); }
+                clearInterval(timerInterval);
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeRemaining = defaultRestTime;
+            document.getElementById('stopwatchDisplay').innerText = formatTimeDisplay(timeRemaining);
+            const startBtnText = document.getElementById('startTimerText');
+            if(startBtnText) startBtnText.innerText = 'ابدأ الراحة';
+            const icon = document.querySelector('#startTimerBtn i');
+            if (icon) { icon.setAttribute('data-lucide', 'play'); lucide.createIcons(); }
+            const resetBtn = document.getElementById('resetTimerBtn');
+            if(resetBtn) resetBtn.style.display = 'none';
+        }
+
+        function formatTimeDisplay(seconds) {
+            const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+            const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${hrs}:${mins}:${secs}`;
+        }
+
+        function calcTotalFromMeals() {
+            const b = parseInt(document.getElementById('inputBreakFast').value) || 0;
+            const l = parseInt(document.getElementById('inputLunch').value) || 0;
+            const d = parseInt(document.getElementById('inputDinner').value) || 0;
+            const s = parseInt(document.getElementById('inputSnack').value) || 0;
+            
+            userData.meals = { breakfast: b, lunch: l, dinner: d, snack: s };
+            userData.todayCalories = b + l + d + s;
+            saveAllToLocalStorage();
+            updateCaloriesData(false);
+        }
+
+        function updateMealsChart() {
+            const target = userData.goalCalories || 2000;
+            const bPercent = Math.min(((userData.meals.breakfast || 0) / target) * 200, 100);
+            const lPercent = Math.min(((userData.meals.lunch || 0) / target) * 200, 100);
+            const dPercent = Math.min(((userData.meals.dinner || 0) / target) * 200, 100);
+            const sPercent = Math.min(((userData.meals.snack || 0) / target) * 200, 100);
+
+            document.getElementById('bar-breakfast').style.height = `${bPercent}%`;
+            document.getElementById('bar-lunch').style.height = `${lPercent}%`;
+            document.getElementById('bar-dinner').style.height = `${dPercent}%`;
+            document.getElementById('bar-snack').style.height = `${sPercent}%`;
+        }
+
+        function saveProfileData() {
+            const nameInput = document.getElementById('inputProfileName').value.trim();
+            const weightInput = document.getElementById('inputProfileWeight').value;
+            const heightInput = document.getElementById('inputProfileHeight').value;
+
+            userData.name = nameInput || "مصطفى";
+            userData.weight = weightInput || "68";
+            userData.height = heightInput || "181";
+
+            saveAllToLocalStorage();
+
+            document.getElementById('displayUserName').innerText = `مرحباً، ${userData.name}`;
+            document.getElementById('profileNameTitle').innerText = userData.name;
+            document.getElementById('homeWeightValue').innerText = `${userData.weight} كغم`;
+            document.getElementById('homeHeightValue').innerText = `الطول: ${userData.height} سم`;
+            document.getElementById('displayUserGoal').innerText = userData.goalText;
+
+            const finalAvatarUrl = avatarPhotos[userData.gender];
+            document.getElementById('displayUserAvatar').src = finalAvatarUrl;
+            document.getElementById('profileAvatarLarge').src = finalAvatarUrl;
+
+            openCustomAppDialogView("تم الحفظ بنجاح", `تم تحديث وحفظ الوزن ${userData.weight} كغم والطول ${userData.height} سم بنجاح.`);
+        }
+
+        function updateCaloriesData(showDialog) {
+            const targetCals = parseInt(document.getElementById('inputGoalCalories').value) || 2000;
+            userData.goalCalories = targetCals;
+            saveAllToLocalStorage();
+
+            const currentCals = userData.todayCalories || 0;
+
+            document.getElementById('homeCalValue').innerText = currentCals;
+            document.getElementById('homeCalGoal').innerText = targetCals;
+            document.getElementById('activityCalDisplay').innerText = `${currentCals} kcal`;
+
+            let percent = Math.min(Math.round((currentCals / targetCals) * 100), 100);
+            if (isNaN(percent) || percent < 0) percent = 0;
+            document.getElementById('activityPercentDisplay').innerText = `${percent}%`;
+            
+            updateProgressCircle();
+            updateMealsChart();
+            updateShareCard();
+
+            if (showDialog) {
+                openCustomAppDialogView("تم تحديث السعرات", `تم حفظ استهلاك السعرات لليوم بنسبة نجاح بلغت ${percent}% من هدفك الكلي.`);
+            }
+        }
+
+        function updateProgressCircle() {
+            const currentCals = parseInt(userData.todayCalories) || 0;
+            const targetCals = parseInt(userData.goalCalories) || 2000;
+            let fraction = currentCals / targetCals;
+            if (fraction > 1) fraction = 1;
+            if (fraction < 0 || isNaN(fraction)) fraction = 0;
+
+            const circle = document.getElementById('activityCircle');
+            const circumference = 502;
+            if (circle) circle.style.strokeDashoffset = circumference - (fraction * circumference);
+        }
+
+        function updateShareCard() {
+            const cardStats = document.getElementById('shareCardStats');
+            if (cardStats) {
+                cardStats.innerText = `حرق اليوم: ${userData.todayCalories || 0} / ${userData.goalCalories || 2000} سعرة`;
+            }
+        }
+    </script>
+</body>
+</html>
